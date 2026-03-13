@@ -4,11 +4,11 @@
 <head>
   <script>
     if (localStorage.getItem("cyberLoggedIn") !== "true") {
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
     function logoutCyberSpace() {
       localStorage.removeItem("cyberLoggedIn");
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
   </script>
   <meta charset="UTF-8">
@@ -2892,6 +2892,109 @@
         card.style.background = '';
       });
     });
+
+    /* --- Fetch and Update Dashboard Data --- */
+    async function loadDashboardData() {
+        const userId = 1; // Default for now
+        const baseUrl = 'http://localhost:8000/api';
+
+        try {
+            // 1. Fetch User Progress (Total XP, Labs, CTFs)
+            const progressRes = await fetch(`${baseUrl}/analytics/user-progress?user_id=${userId}`);
+            if (progressRes.ok) {
+                const data = await progressRes.json();
+                // Update Hero Text or relevant stats
+                document.querySelector('.hero-text p').innerText = `Progress: ${data.xp} XP • ${data.labs_completed} Labs • ${data.ctf_completed} CTFs`;
+                
+                // Update performance stat boxes
+                const statBoxes = document.querySelectorAll('.stat-box');
+                if (statBoxes[0]) {
+                    statBoxes[0].querySelector('.stat-label').innerText = 'Labs Completed';
+                    statBoxes[0].querySelector('.stat-value').innerText = data.labs_completed;
+                }
+                if (statBoxes[1]) {
+                    statBoxes[1].querySelector('.stat-label').innerText = 'CTFs Completed';
+                    statBoxes[1].querySelector('.stat-value').innerText = data.ctf_completed;
+                }
+            }
+
+            // 2. Fetch Performance Data (Weekly Activity)
+            const perfRes = await fetch(`${baseUrl}/performance?user_id=${userId}`);
+            if (perfRes.ok) {
+                const perfData = await perfRes.json();
+                const bars = document.querySelectorAll('.bar-chart .bar');
+                if (perfData.weekly_activity && perfData.weekly_activity.length > 0) {
+                    perfData.weekly_activity.forEach((val, idx) => {
+                        if (bars[idx]) {
+                            // Map XP to height (max 100%)
+                            const height = Math.min(100, (val / 500) * 100); 
+                            bars[idx].style.height = `${height === 0 ? 5 : height}%`;
+                        }
+                    });
+                }
+            }
+
+            // 3. Fetch XP Trends
+            const trendsRes = await fetch(`${baseUrl}/xp-trends?user_id=${userId}`);
+            if (trendsRes.ok) {
+                const trendsData = await trendsRes.json();
+                if (trendsData.values && trendsData.values.length > 0) {
+                   updateXPWaves(trendsData.values);
+                }
+            }
+
+        } catch (err) {
+            console.error("Failed to load dashboard data:", err);
+        }
+    }
+
+    function updateXPWaves(values) {
+        const svg = document.querySelector('.wave-chart-wrap svg');
+        if (!svg) return;
+        
+        // We have 3 main paths to update if we want to be thorough,
+        // but let's update the main Magenta one (Wave 3) or create a new dynamic one.
+        const path3 = svg.querySelector('path[stroke*="rgba(236, 72, 153, 0.9)"]');
+        const area3 = svg.querySelector('fill="url(#magentaGrad)"'); // Not exactly correct selector but illustrative
+
+        // Map 7 values to SVG points (320x130 area)
+        const width = 320;
+        const height = 130;
+        const stepX = width / (values.length - 1);
+        const maxVal = Math.max(...values, 100);
+
+        let d = `M 0 ${height - (values[0]/maxVal)*height}`;
+        for(let i=1; i<values.length; i++) {
+            const x = i * stepX;
+            const y = height - (values[i]/maxVal)*height;
+            d += ` L ${x} ${y}`;
+        }
+        
+        if (path3) path3.setAttribute('d', d);
+        
+        // Also update the indicator circle position
+        const circle = svg.querySelector('circle[cx="150"]');
+        const countText = svg.querySelector('text[x="150"]');
+        if (circle && values.length > 4) {
+             const midIdx = Math.floor(values.length / 2);
+             const cx = midIdx * stepX;
+             const cy = height - (values[midIdx]/maxVal)*height;
+             circle.setAttribute('cx', cx);
+             circle.setAttribute('cy', cy);
+             const glowCircle = svg.querySelector('circle[r="4.5"]');
+             if(glowCircle) {
+                 glowCircle.setAttribute('cx', cx);
+                 glowCircle.setAttribute('cy', cy);
+             }
+             if(countText) {
+                 countText.setAttribute('x', cx);
+                 countText.setAttribute('y', cy + 24);
+                 countText.textContent = `+${values[midIdx]}`;
+             }
+        }
+    }
+
+    loadDashboardData();
   </script>
   <script src="cyber-notifications.js"></script>
   <script src="navigation.js"></script>

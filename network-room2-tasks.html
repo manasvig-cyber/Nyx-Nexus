@@ -1893,6 +1893,13 @@
             if (!rooms.includes(roomId)) {
                 rooms.push(roomId);
                 localStorage.setItem('cyberSpaceRooms', JSON.stringify(rooms));
+
+                // Sync with backend
+                fetch('http://localhost:8000/api/labs/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: 1, lab_id: roomId })
+                }).catch(err => console.error("Backend sync failed:", err));
             }
         }
 

@@ -51,7 +51,11 @@ async def nova_ai(request: Request):
             "http://localhost:11434/api/generate",
             json={
                 "model": "gemma:2b",
-                "prompt": f"You are MR NOVA, a cybersecurity assistant. Answer in 1-2 short sentences only. {message}",
+                "prompt": f"""
+You are MR NOVA, the AI assistant of Nyx Nexus cybersecurity training platform.
+Give clear short answers related to cybersecurity, SOC, CTF, networking and hacking labs.
+User question: {message}
+""",
                 "stream": False,
                 "options": {
                     "num_predict": 100,

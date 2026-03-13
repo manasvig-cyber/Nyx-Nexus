@@ -760,7 +760,7 @@
         <main class="main">
             <h1 class="page-title">Skill Tree</h1>
 
-            <div class="module-grid">
+            <div class="module-grid" id="labs">
 
                 <!-- Module 1 -->
                 <div class="module-card-wrapper">
@@ -947,9 +947,65 @@
         </aside>
 
     </div>
+<script src="api.js"></script>
     <script src="cyber-notifications.js"></script>
     <script src="navigation.js"></script>
     <script src="mr-nova.js"></script>
+   <script>
+
+async function loadLabs(){
+
+    const userId = localStorage.getItem("user_id");
+
+    const labs = await apiRequest(`/api/labs?user_id=${userId}`);
+
+    const container = document.getElementById("labs");
+
+    container.innerHTML = "";
+
+    labs.forEach(lab => {
+
+        const completed = lab.completed ? "Completed ✓" : "Complete";
+
+        container.innerHTML += `
+        <div class="lab-card">
+
+            <h3>${lab.name}</h3>
+
+            <button 
+                onclick="completeLab(${lab.id})"
+                ${lab.completed ? "disabled" : ""}
+            >
+                ${completed}
+            </button>
+
+        </div>
+        `;
+
+    });
+
+}
+
+
+async function completeLab(labId){
+
+    const userId = localStorage.getItem("user_id");
+
+    await apiRequest("/api/labs/complete","POST",{
+        user_id: userId,
+        lab_id: labId
+    });
+
+    alert("Lab completed!");
+
+    loadLabs(); // refresh UI
+}
+
+
+window.onload = loadLabs;
+
+</script>
+
 </body>
 
 </html>

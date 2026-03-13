@@ -131,3 +131,33 @@ def get_xp_trends(
         "labels": labels,
         "values": values,
     }
+
+
+@router.get("/analytics/user-progress", response_model=schemas.UserProgressResponse)
+def get_user_progress(
+    user_id: Optional[int] = Query(default=None, description="Optional player id filter"),
+    db: Session = Depends(get_db),
+):
+    scoped_user_id = _resolve_user_scope(user_id, db)
+    if scoped_user_id is None:
+        return {"labs_completed": 0, "ctf_completed": 0, "xp": 0}
+
+    user = db.query(models.User).filter(models.User.id == scoped_user_id).first()
+    
+    # Count labs completed (excluding CTFs)
+    labs_completed = db.query(models.Attempt).filter(
+        models.Attempt.user_id == scoped_user_id,
+        models.Attempt.attempt_result == "completed"
+    ).join(models.Lab).filter(~models.Lab.title.contains("ctf")).count()
+
+    # Count CTFs completed
+    ctf_completed = db.query(models.Attempt).filter(
+        models.Attempt.user_id == scoped_user_id,
+        models.Attempt.attempt_result == "completed"
+    ).join(models.Lab).filter(models.Lab.title.contains("ctf")).count()
+
+    return {
+        "labs_completed": labs_completed,
+        "ctf_completed": ctf_completed,
+        "xp": user.xp if user else 0
+    }

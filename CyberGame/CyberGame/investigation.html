@@ -595,6 +595,10 @@
             // Result
             if (success) {
                 const msg = cfg.successMessage || 'Threat successfully contained!';
+                
+                // Save completion status to local storage
+                localStorage.setItem('episode_' + cfg.id + '_completed', 'true');
+
                 const html = `
           <p style="color:var(--success)"><strong>&gt; OUTCOME: SUCCESS ✓</strong></p><br>
           <p>🎉 ${msg}</p><br>

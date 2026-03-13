@@ -65,3 +65,12 @@ class LeaderboardEntry(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class LabCompletionRequest(BaseModel):
+    user_id: int
+    lab_id: str
+
+class UserProgressResponse(BaseModel):
+    labs_completed: int
+    ctf_completed: int
+    xp: int

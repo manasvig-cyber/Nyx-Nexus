@@ -1368,8 +1368,8 @@
                     <span class="nav-label">Roadmaps</span>
                 </div>
                 <div class="nav-item" style="--i: #8b5cf6; --j: #ec4899;" onclick="openThreatMap()">
-                  <i class="fas fa-lightbulb"></i>
-                  <span class="nav-label">MAP</span>
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="nav-label">MAP</span>
                 </div>
                 <div class="nav-item" style="--i: #06b6d4; --j: #3b82f6;"
                     onclick="window.location.href='achievements.html'">
@@ -1380,9 +1380,9 @@
                 <div class="sidebar-spacer"></div>
                 <div class="nav-sep"></div>
                 <div class="nav-item" style="--i: #64748b; --j: #94a3b8;" onclick="window.location.href='about.html'">
-          <i class="fas fa-circle-info"></i>
-          <span class="nav-label">About Us</span>
-        </div>
+                    <i class="fas fa-circle-info"></i>
+                    <span class="nav-label">About Us</span>
+                </div>
             </div>
         </nav>
 
@@ -1795,6 +1795,13 @@
             if (!rooms.includes(roomId)) {
                 rooms.push(roomId);
                 localStorage.setItem('cyberSpaceRooms', JSON.stringify(rooms));
+
+                // Sync with backend
+                fetch('http://localhost:8000/api/labs/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: 1, lab_id: roomId })
+                }).catch(err => console.error("Backend sync failed:", err));
             }
         }
 

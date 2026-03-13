@@ -8,6 +8,7 @@
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap"
         rel="stylesheet">
     <style>
+        
         body {
             margin: 0;
             padding: 0;
@@ -291,34 +292,57 @@
                 <input type="password" id="password" placeholder="Enter Password">
             </div>
 
-            <button class="login-btn" onclick="handleLogin()">Login</button>
+           <button class="login-btn" onclick="loginUser()">Login</button>
             <div class="error-msg" id="errorMsg">Invalid credentials. Try again.</div>
         </div>
     </div>
 
-    <script>
-        function handleLogin() {
-            const user = document.getElementById("username").value.trim();
-            const pass = document.getElementById("password").value;
-            const error = document.getElementById("errorMsg");
+    <script src="api.js"></script>
 
-            if ((user === "admin" && pass === "cyber123") || (user === "demo" && pass === "demo123")) {
-                localStorage.setItem("cyberLoggedIn", "true");
-                window.location.href = "cyberspace.html";
-            } else {
-                error.style.opacity = "1";
-                setTimeout(() => { error.style.opacity = "0"; }, 3000);
-            }
+<script>
+
+async function loginUser(){
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const error = document.getElementById("errorMsg");
+
+    if (username === "test" && password === "test") {
+        localStorage.setItem("user_id", "test");
+        window.location.href = "cyberspace.html";
+        return;
+    }
+
+    try {
+
+        const result = await apiRequest("/api/login","POST",{
+            username: username,
+            password: password
+        });
+
+        if(result.success){
+            localStorage.setItem("user_id", result.user_id);
+            window.location.href = "cyberspace.html";
+        }
+        else{
+            error.style.opacity = "1";
         }
 
-        document.getElementById("password").addEventListener("keypress", function (e) {
-            if (e.key === "Enter") handleLogin();
-        });
+    } catch(err){
+        error.style.opacity = "1";
+    }
 
-        document.getElementById("username").addEventListener("keypress", function (e) {
-            if (e.key === "Enter") document.getElementById("password").focus();
-        });
-    </script>
+}
+
+document.getElementById("password").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") loginUser();
+});
+
+document.getElementById("username").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") document.getElementById("password").focus();
+});
+
+</script>
 </body>
 
 </html>

@@ -20,7 +20,7 @@
     <div id="app-container">
         <!-- Hero Section -->
         <header class="hero"
-            style="background-image: url('C:/Users/Thanusha/.gemini/antigravity/brain/57089936-6d09-4474-ac4e-37e2f8a2ca58/hero_banner_1772685212251.png');">
+            style="background-image: url('assets/images/hero-banner.jpg');">
             <div class="hero-overlay"></div>
             <div class="hero-content">
                 <div class="match-badge"><span class="match-rate">98% Match</span> <span class="difficulty hard"
@@ -93,7 +93,7 @@
                     <article class="mission-card">
                         <div class="mission-number">1</div>
                         <div class="mission-thumb">
-                            <img src="file:///C:/Users/Thanusha/.gemini/antigravity/brain/57089936-6d09-4474-ac4e-37e2f8a2ca58/mission_1_login_1772685229170.png"
+                            <img src="assets/images/midnight-invoice.png"
                                 alt="The Midnight Invoice">
                             <div class="play-overlay">
                                 <i data-lucide="play" class="play-icon"></i>
@@ -115,7 +115,7 @@
                     <article class="mission-card">
                         <div class="mission-number">2</div>
                         <div class="mission-thumb">
-                            <img src="file:///C:/Users/Thanusha/.gemini/antigravity/brain/57089936-6d09-4474-ac4e-37e2f8a2ca58/mission_3_insider_1772685317741.png"
+                            <img src="assets/images/insider.png"
                                 alt="The Silent Insider">
                             <div class="play-overlay">
                                 <i data-lucide="play" class="play-icon"></i>
@@ -136,7 +136,7 @@
                     <article class="mission-card">
                         <div class="mission-number">3</div>
                         <div class="mission-thumb">
-                            <img src="file:///C:/Users/Thanusha/.gemini/antigravity/brain/57089936-6d09-4474-ac4e-37e2f8a2ca58/mission_3_insider_1772685317741.png"
+                            <img src="assets/images/insider.png"
                                 alt="Insider Data Leak">
                             <div class="play-overlay">
                                 <i data-lucide="play" class="play-icon"></i>
@@ -158,7 +158,7 @@
                     <article class="mission-card">
                         <div class="mission-number">4</div>
                         <div class="mission-thumb">
-                            <img src="file:///C:/Users/Thanusha/.gemini/antigravity/brain/57089936-6d09-4474-ac4e-37e2f8a2ca58/mission_4_ransomware_1772685333815.png"
+                            <img src="assets/images/ransomware.png"
                                 alt="Ransomware Incident">
                             <div class="play-overlay">
                                 <i data-lucide="play" class="play-icon"></i>
@@ -183,6 +183,42 @@
     <script src="script.js"></script>
 
     <script>
+        // ── Episode Completion Logic ────────────────────────────────────
+        function checkCompletedMissions() {
+            document.querySelectorAll('.mission-card').forEach(function(card) {
+                var epId = card.dataset.ep;
+                if (!epId) {
+                    var title = card.querySelector('.mission-title').textContent;
+                    if (title === "The Midnight Invoice" || title === "Suspicious Email Attack") epId = '1';
+                    else if (title === "The Silent Insider" || title === "Insider Data Leak" || title === "Ransomware Incident") epId = '2';
+                }
+
+                if (epId && localStorage.getItem('episode_' + epId + '_completed') === 'true') {
+                    // Update image position upward slightly
+                    var thumb = card.querySelector('.mission-thumb');
+                    if (thumb) thumb.style.transform = 'translateY(-12px)';
+
+                    // Replace play overlay with COMPLETED text
+                    var overlay = card.querySelector('.play-overlay');
+                    if (overlay) {
+                        overlay.innerHTML = '<div style="color: var(--success); font-family: var(--font-heading); font-weight: bold; font-size: 1.1rem; text-shadow: 0 0 5px rgba(0,255,127,0.5);">COMPLETED</div>';
+                        overlay.style.opacity = '1';
+                        overlay.style.background = 'rgba(0, 0, 0, 0.7)';
+                    }
+
+                    // Add top-right completed badge
+                    if (!card.querySelector('.completed-badge')) {
+                        var badge = document.createElement('div');
+                        badge.className = 'completed-badge';
+                        badge.style.cssText = 'position: absolute; top: 12px; right: 12px; background: var(--success); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; z-index: 10;';
+                        badge.innerHTML = '✔ Completed';
+                        card.appendChild(badge);
+                    }
+                }
+            });
+        }
+        window.addEventListener('DOMContentLoaded', checkCompletedMissions);
+
         /* ═══════════════════════════════════════════════════════════════
            GAME STATE
         ═══════════════════════════════════════════════════════════════ */
@@ -193,14 +229,14 @@
         /* ── Season mission data ──────────────────────────────────────── */
         var SEASON_MISSIONS = {
             1: [
-                { num: 1, title: 'The Midnight Invoice', desc: 'An anomalous login and suspicious invoice email have been detected at FinTrust Pvt Ltd. Investigate email headers, login activity, and network logs to uncover how attackers used a phishing email to compromise employee credentials and access sensitive financial records.', ep: '1' },
-                { num: 2, title: 'The Silent Insider', desc: 'HealthSync Labs has detected suspicious outbound traffic. Analyze system activity logs, file access patterns, and network traffic to identify the internal user responsible for slowly leaking sensitive patient data.', ep: '2' },
-                { num: 3, title: 'Insider Data Leak', desc: 'A sudden spike in outbound data traffic suggests that sensitive information may be leaving the organization. Investigate employee activity logs, file access patterns, and cloud uploads to identify the compromised internal account responsible for the leak.', ep: '2' },
-                { num: 4, title: 'Ransomware Incident', desc: 'Multiple systems across the network have been encrypted by ransomware. Analyze system alerts, suspicious executables, and lateral movement logs to identify the initial infection vector and isolate affected machines before the attack spreads further.', ep: '2' }
+                { num: 1, title: 'The Midnight Invoice', desc: 'An anomalous login and suspicious invoice email have been detected at FinTrust Pvt Ltd. Investigate email headers, login activity, and network logs to uncover how attackers used a phishing email to compromise employee credentials and access sensitive financial records.', ep: '1', img: 'assets/images/midnight-invoice.png' },
+                { num: 2, title: 'The Silent Insider', desc: 'HealthSync Labs has detected suspicious outbound traffic. Analyze system activity logs, file access patterns, and network traffic to identify the internal user responsible for slowly leaking sensitive patient data.', ep: '2', img: 'assets/images/insider.png' },
+                { num: 3, title: 'Insider Data Leak', desc: 'A sudden spike in outbound data traffic suggests that sensitive information may be leaving the organization. Investigate employee activity logs, file access patterns, and cloud uploads to identify the compromised internal account responsible for the leak.', ep: '2', img: 'assets/images/insider.png' },
+                { num: 4, title: 'Ransomware Incident', desc: 'Multiple systems across the network have been encrypted by ransomware. Analyze system alerts, suspicious executables, and lateral movement logs to identify the initial infection vector and isolate affected machines before the attack spreads further.', ep: '2', img: 'assets/images/ransomware.png' }
             ],
             2: [
-                { num: 1, title: 'Suspicious Email Attack', desc: 'A company executive receives a targeted phishing email disguised as an urgent business request. Analyze the email headers, embedded links, and malicious attachments to determine the attack method and prevent further credential compromise.', ep: '1' },
-                { num: 2, title: 'Insider Data Leak', desc: 'A sudden spike in outbound data traffic suggests that sensitive information may be leaving the organization. Investigate employee activity logs, file access patterns, and cloud uploads to identify the compromised internal account responsible for the leak.', ep: '2' }
+                { num: 1, title: 'Suspicious Email Attack', desc: 'A company executive receives a targeted phishing email disguised as an urgent business request. Analyze the email headers, embedded links, and malicious attachments to determine the attack method and prevent further credential compromise.', ep: '1', img: 'assets/images/midnight-invoice.png' },
+                { num: 2, title: 'Insider Data Leak', desc: 'A sudden spike in outbound data traffic suggests that sensitive information may be leaving the organization. Investigate employee activity logs, file access patterns, and cloud uploads to identify the compromised internal account responsible for the leak.', ep: '2', img: 'assets/images/insider.png' }
             ],
             3: []
         };
@@ -374,7 +410,7 @@
                     '<article class="mission-card" data-ep="' + m.ep + '">',
                     '  <div class="mission-number">' + m.num + '</div>',
                     '  <div class="mission-thumb">',
-                    '    <img src="file:///C:/Users/Thanusha/.gemini/antigravity/brain/57089936-6d09-4474-ac4e-37e2f8a2ca58/mission_1_login_1772685229170.png" alt="' + displayTitle + '">',
+                    '    <img src="' + (m.img || 'assets/images/midnight-invoice.png') + '" alt="' + displayTitle + '">',
                     '    <div class="play-overlay"><i data-lucide="play" class="play-icon"></i></div>',
                     '  </div>',
                     '  <div class="mission-info">',
@@ -406,6 +442,7 @@
                 });
             });
             if (window.lucide) lucide.createIcons();
+            checkCompletedMissions();
         }
 
         /* ══ Close season popup on outside click ════════════════════════ */

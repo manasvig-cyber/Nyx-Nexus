@@ -2187,7 +2187,34 @@
     <script src="cyber-notifications.js"></script>
     <script src="navigation.js"></script>
     <script src="mr-nova.js"></script>
+<script src="api.js"></script>
 
+<script>
+
+async function loadLeaderboard(){
+
+    const players = await apiRequest("/api/leaderboard");
+
+    const table = document.getElementById("leaderboard");
+
+    players.forEach(player => {
+
+        table.innerHTML += `
+        <tr>
+            <td>${player.username}</td>
+            <td>${player.xp}</td>
+        </tr>
+        `;
+
+    });
+
+}
+
+window.onload = loadLeaderboard;
+
+</script>
+
+window.onload = loadLeaderboard;
     <!-- Athena Loading Overlay -->
     <div id="athena-overlay" class="athena-overlay">
         <div class="athena-loading-text">
@@ -2229,7 +2256,17 @@
             <p class="show">Launching SELENE...</p>
         </div>
     </div>
+<table style="margin-top:20px; width:300px;">
+<thead>
+<tr>
+<th>User</th>
+<th>XP</th>
+</tr>
+</thead>
 
+<tbody id="leaderboard"></tbody>
+
+</table>
     <!-- Atlas Defense Shield Overlay -->
     <div id="atlas-overlay" class="atlas-overlay">
         <div class="shield-container">
