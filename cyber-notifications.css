@@ -1,0 +1,114 @@
+/* cyber-notifications.css */
+#global-notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    pointer-events: none;
+}
+
+.cyber-notification {
+    width: 320px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: rgba(10, 10, 25, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #fff;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: auto;
+}
+
+.cyber-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.cyber-notification.hide {
+    transform: translateX(120%);
+    opacity: 0;
+}
+
+/* Specific types */
+.notification-xp {
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.notification-xp .notif-icon {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+.notification-badge {
+    border-color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    animation: badgePulseGlow 2s infinite alternate;
+}
+
+@keyframes badgePulseGlow {
+    from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+    to { box-shadow: 0 0 25px rgba(255, 215, 0, 0.7); }
+}
+
+.notification-badge .notif-icon {
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+}
+
+.notification-level {
+    border-color: #a855f7;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+}
+
+.notification-level .notif-icon {
+    color: #a855f7;
+    text-shadow: 0 0 10px #a855f7;
+}
+
+.notification-room {
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.notification-room .notif-icon {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+.notif-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.notif-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.notif-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: inherit;
+}
+.notification-xp .notif-title { color: #00ffff; }
+.notification-badge .notif-title { color: #ffd700; }
+.notification-level .notif-title { color: #a855f7; }
+
+.notif-message {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    color: #cbd5e1;
+    line-height: 1.3;
+}

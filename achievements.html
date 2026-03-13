@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements – Nyx Nexus</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #090e24;
+            --bg-mid: #1e1136;
+            --bg-card: rgba(22, 16, 44, 0.85);
+            --purple: #7c3aed;
+            --purple-l: #a855f7;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+            --gold: #ffd700;
+            --text-main: #e2e8f0;
+            --text-sub: #94a3b8;
+            --sidebar-w: 95px;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-left {
+            width: var(--sidebar-w);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .sidebar-inner {
+            background: rgba(18, 14, 34, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.20);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            width: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 12px;
+            height: calc(100% - 40px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: -1px -1px 0 rgba(79, 70, 229, 0.4),
+                -2px -2px 0 rgba(124, 58, 237, 0.4),
+                -3px -3px 0 rgba(124, 58, 237, 0.3),
+                -4px -4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar-inner:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .avatar-self {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            border: 2px solid var(--purple-l);
+            box-shadow: 0 0 16px rgba(139, 92, 246, 0.5);
+            color: #fff;
+        }
+
+        .nav-sep {
+            width: 28px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+            margin: 4px 0;
+        }
+
+        .nav-item {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 52px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.5s;
+            color: var(--text-sub);
+        }
+
+        .nav-item::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .nav-item::after {
+            content: "";
+            position: absolute;
+            top: 5px;
+            width: 100%;
+            height: 100%;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            transition: 0.5s;
+            filter: blur(15px);
+            z-index: -1;
+            opacity: 0;
+        }
+
+        .nav-item:hover {
+            width: 110px;
+            transform: translateX(29px);
+            z-index: 1000;
+        }
+
+        .nav-item:hover::before {
+            opacity: 1;
+        }
+
+        .nav-item:hover::after {
+            opacity: 0.5;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            transition: 0.5s;
+            transition-delay: 0.2s;
+            z-index: 10;
+            animation: iconFloat 4s infinite ease-in-out;
+        }
+
+        @keyframes iconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .nav-item:hover i {
+            transform: scale(0);
+            color: #fff;
+            transition-delay: 0s;
+            animation: none;
+        }
+
+        .nav-label {
+            position: absolute;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transform: scale(0);
+            transition: 0.5s;
+            z-index: 10;
+            white-space: nowrap;
+            pointer-events: none;
+            display: block;
+            /* Overriding previous display: none */
+        }
+
+        .nav-item:hover .nav-label {
+            transform: scale(1);
+            transition-delay: 0.2s;
+        }
+
+        .nav-item.active::before {
+            opacity: 0.4;
+        }
+
+        .nav-item.active i {
+            color: #fff;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            padding: 40px;
+            max-width: 1200px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.06em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 10;
+            /* 8-layer 3D extrusion in Gold */
+            text-shadow:
+                0 0 25px rgba(172, 149, 21, 0.8),
+                0 0 50px rgba(255, 215, 0, 0.4),
+                -0.8px -0.6px 0 #b8860b,
+                -1.6px -1.2px 0 #8d6605,
+                -2.4px -1.8px 0 #b8860b,
+                -3.2px -2.4px 0 #daa520,
+                -4.0px -3.0px 0 #daa520,
+                -4.8px -3.6px 0 #daa520,
+                -5.6px -4.2px 0 #b8860b,
+                -6.4px -4.8px 0 rgba(0, 0, 0, 0.5);
+            transform: translate(6.4px, 4.8px);
+        }
+
+        .page-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            color: var(--text-sub);
+            letter-spacing: 1px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--cyan);
+            box-shadow: 0 0 15px var(--cyan);
+        }
+
+        .stat-card:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .stat-val {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar-container {
+            grid-column: 1 / -1;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-bar-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+        }
+
+        .progress-bar-wrap {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--blue));
+            box-shadow: 0 0 20px var(--cyan);
+            width: 20%;
+            transition: width 1.5s ease-in-out;
+        }
+
+        /* Badge Grid */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .badge-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.4s;
+            position: relative;
+            opacity: 0.6;
+        }
+
+        .badge-card.unlocked {
+            opacity: 1;
+            border-color: var(--glow-color);
+            box-shadow: 0 0 30px var(--glow-alpha), inset 0 0 20px var(--glow-alpha);
+            animation: badgeEntry 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes badgeEntry {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .badge-card.unlocked .badge-icon-wrap {
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 5px var(--glow-color);
+                transform: scale(1);
+            }
+
+            100% {
+                box-shadow: 0 0 20px var(--glow-color);
+                transform: scale(1.05);
+            }
+        }
+
+        .badge-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .badge-icon-wrap {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            position: relative;
+            color: #666;
+        }
+
+        .unlocked .badge-icon-wrap {
+            color: var(--glow-color);
+            text-shadow: 0 0 15px var(--glow-color);
+            background: var(--glow-alpha);
+        }
+
+        .badge-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .badge-desc {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .badge-status {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: inline-block;
+        }
+
+        .locked .badge-status {
+            color: var(--text-dim);
+        }
+
+        .unlocked .badge-status {
+            color: var(--glow-color);
+            box-shadow: inset 0 0 10px var(--glow-alpha);
+        }
+
+        .lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.2);
+            z-index: 2;
+        }
+
+        .unlocked .lock-overlay {
+            display: none;
+        }
+
+        /* Recent Achievements */
+        .recent-section {
+            margin-top: 60px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title i {
+            color: var(--gold);
+        }
+
+        .recent-list {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .recent-item {
+            flex-shrink: 0;
+            width: 180px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .recent-item i {
+            font-size: 20px;
+            color: var(--cyan);
+        }
+
+        .recent-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .recent-date {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        /* Leaderboard Side (if needed, but simple side panel for now) */
+        .sidebar-right {
+            width: 320px;
+            padding: 40px 20px;
+            background: rgba(10, 10, 30, 0.8);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            flex-shrink: 0;
+        }
+
+        .leaderboard-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Leaderboard Alignment Classes */
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rank-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .xp-value {
+            text-align: right;
+            min-width: 85px;
+            padding-right: 5px;
+            color: var(--cyan);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-left">
+            <div class="sidebar-inner">
+                <div class="avatar-self">NN</div>
+                <div class="nav-sep"></div>
+
+                <div class="nav-item" style="--i: #7c3aed; --j: #3b82f6;"
+                    onclick="window.location.href='cyberspace.html'">
+                    <i class="fas fa-house"></i>
+                    <span class="nav-label">Dashboard</span>
+                </div>
+                <div class="nav-item" style="--i: #06b6d4; --j: #22c55e;" onclick="window.location.href='games.html'">
+                    <i class="fas fa-gamepad"></i>
+                    <span class="nav-label">Games</span>
+                </div>
+                <div class="nav-item" style="--i: #ff00cc; --j: #3333ff;"
+                    onclick="window.location.href='learning-path.html'">
+                    <i class="fas fa-route"></i>
+                    <span class="nav-label">Path</span>
+                </div>
+                <div class="nav-item" style="--i: #f97316; --j: #ef4444;"
+                    onclick="window.location.href='ctf-challenges.html'">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="nav-label">CTF</span>
+                </div>
+                <div class="nav-item" style="--i: #eab308; --j: #f97316;"
+                    onclick="window.location.href='cyber-roadmap.html'">
+                    <i class="fas fa-map-signs"></i>
+                    <span class="nav-label">Map</span>
+                </div>
+                <div class="nav-item" style="--i: #8b5cf6; --j: #ec4899;" onclick="openThreatMap()">
+                  <i class="fas fa-lightbulb"></i>
+                  <span class="nav-label">MAP</span>
+                </div>
+                <div class="nav-item active" style="--i: #06b6d4; --j: #3b82f6;"
+                    onclick="window.location.href='achievements.html'">
+                    <i class="fas fa-trophy"></i>
+                    <span class="nav-label">Achievements</span>
+                </div>
+
+                <div class="sidebar-spacer"></div>
+                <div class="nav-sep"></div>
+                <div class="nav-item" style="--i: #64748b; --j: #94a3b8;" onclick="window.location.href='about.html'">
+                    <i class="fas fa-circle-info"></i>
+                    <span class="nav-label">About Us</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="page-header">
+                <h1 class="page-title">Achievements</h1>
+                <p class="page-subtitle">Track your progress and earned cyber badges</p>
+            </div>
+
+            <!-- Overall Progress Section -->
+            <div class="progress-section">
+                <div class="stat-card">
+                    <div class="stat-val" id="stats-rooms">0</div>
+                    <div class="stat-label">Rooms Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stats-unlocked">0</div>
+                    <div class="stat-label">Achievements Unlocked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stats-xp">0</div>
+                    <div class="stat-label">Total XP</div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar-header">
+                        <span>Global Progress</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" id="progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 12px; color: var(--text-sub); text-align: center;">
+                        <span id="progress-fraction">0 / 2</span> Badges Collected
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badge Grid -->
+            <div class="badge-grid">
+                <!-- Badge 1 -->
+                <div class="badge-card locked" id="badge-network-beginner"
+                    style="--glow-color: #06b6d4; --glow-alpha: rgba(6, 182, 212, 0.2);">
+                    <div class="lock-overlay"><i class="fas fa-lock"></i></div>
+                    <div class="badge-icon-wrap">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="badge-name">Network Beginner</div>
+                    <div class="badge-desc">Complete Room 1 – Internet & Network Foundations. Learned the fundamentals
+                        of how networks work.</div>
+                    <div class="badge-status">Locked</div>
+                </div>
+
+                <!-- Badge 2 -->
+                <div class="badge-card locked" id="badge-packet-analyst"
+                    style="--glow-color: #a855f7; --glow-alpha: rgba(168, 85, 247, 0.2);">
+                    <div class="lock-overlay"><i class="fas fa-lock"></i></div>
+                    <div class="badge-icon-wrap">
+                        <i class="fas fa-magnifying-glass-chart"></i>
+                    </div>
+                    <div class="badge-name">Packet Analyst</div>
+                    <div class="badge-desc">Complete Room 2 – Packet Flow & Traffic Analysis. Analyzed network traffic
+                        and packet behavior.</div>
+                    <div class="badge-status">Locked</div>
+                </div>
+
+                <!-- Badge 3: Python Logic Builder -->
+                <div class="badge-card locked" id="badge-python-logic-master"
+                    style="--glow-color: #3b82f6; --glow-alpha: rgba(59, 130, 246, 0.2);">
+                    <div class="lock-overlay"><i class="fas fa-lock"></i></div>
+                    <div class="badge-icon-wrap">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <div class="badge-name">Python Logic Builder</div>
+                    <div class="badge-desc">Complete Python Basics. Mastered the core logic patterns of automation
+                        systems.</div>
+                    <div class="badge-status">Locked</div>
+                </div>
+
+                <!-- Badge 4: Automation Architect -->
+                <div class="badge-card locked" id="badge-automation-architect"
+                    style="--glow-color: #7c3aed; --glow-alpha: rgba(124, 58, 237, 0.2);">
+                    <div class="lock-overlay"><i class="fas fa-lock"></i></div>
+                    <div class="badge-icon-wrap">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="badge-name">Automation Architect</div>
+                    <div class="badge-desc">Complete Automation Logic Lab. Synthesized complex security workflows.</div>
+                    <div class="badge-status">Locked</div>
+                </div>
+
+                <!-- Badge 5: Cyber Flag Hunter -->
+                <div class="badge-card locked" id="badge-cyber-flag-hunter"
+                    style="--glow-color: #ef4444; --glow-alpha: rgba(239, 68, 68, 0.2);">
+                    <div class="lock-overlay"><i class="fas fa-lock"></i></div>
+                    <div class="badge-icon-wrap">
+                        <i class="fas fa-skull-crossbones"></i>
+                    </div>
+                    <div class="badge-name">Cyber Flag Hunter</div>
+                    <div class="badge-desc">Conquer all CTF Challenges. Tracked down and secured every hidden signal.
+                    </div>
+                    <div class="badge-status">Locked</div>
+                </div>
+
+                <!-- More placeholders for future badges -->
+                <div class="badge-card locked" style="--glow-color: #22c55e; --glow-alpha: rgba(34, 197, 94, 0.2);">
+                    <div class="lock-overlay"><i class="fas fa-lock"></i></div>
+                    <div class="badge-icon-wrap">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div class="badge-name">Cyber Defender</div>
+                    <div class="badge-desc">Complete the Security Essentials path. Protect systems from common
+                        vulnerabilities.</div>
+                    <div class="badge-status">Incoming</div>
+                </div>
+            </div>
+
+            <!-- Recent Achievements -->
+            <div class="recent-section">
+                <h2 class="section-title"><i class="fas fa-bolt"></i> Recent Achievements</h2>
+                <div class="recent-list" id="recent-list">
+                    <!-- Items injected here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Side Panel -->
+        <aside class="sidebar-right">
+            <div class="leaderboard-card">
+                <h3 style="font-family: 'Orbitron', sans-serif; margin-bottom: 20px; color: var(--cyan);"><i
+                        class="fas fa-trophy"></i> Top Explorers</h3>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <div class="leaderboard-row">
+                        <div class="rank-name">
+                            <span
+                                style="color: var(--gold); font-weight: bold; width: 15px; display: inline-block;">1</span>
+                            <span>CyberMage</span>
+                        </div>
+                        <div class="xp-value">12,450 XP</div>
+                    </div>
+                    <div class="leaderboard-row">
+                        <div class="rank-name">
+                            <span
+                                style="color: #c0c0c0; font-weight: bold; width: 15px; display: inline-block;">2</span>
+                            <span>ProtoGhost</span>
+                        </div>
+                        <div class="xp-value">11,200 XP</div>
+                    </div>
+                    <div class="leaderboard-row">
+                        <div class="rank-name">
+                            <span
+                                style="color: #cd7f32; font-weight: bold; width: 15px; display: inline-block;">3</span>
+                            <span>NeonWraith</span>
+                        </div>
+                        <div class="xp-value">9,800 XP</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="cyber-notifications.js"></script>
+    <script>
+        function loadAchievements() {
+            const xp = parseInt(localStorage.getItem('cyberSpaceXP')) || 0;
+            const unlockedBadges = JSON.parse(localStorage.getItem('cyberSpaceBadges')) || [];
+            const completedRooms = JSON.parse(localStorage.getItem('cyberSpaceRooms')) || [];
+
+            document.getElementById('stats-xp').innerText = xp;
+            document.getElementById('stats-rooms').innerText = completedRooms.length;
+            document.getElementById('stats-unlocked').innerText = unlockedBadges.length;
+
+            const totalPossibleBadges = 5;
+            const percent = (unlockedBadges.length / totalPossibleBadges) * 100;
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-percent').innerText = Math.round(percent) + '%';
+            document.getElementById('progress-fraction').innerText = `${unlockedBadges.length} / ${totalPossibleBadges}`;
+
+            // Update badge cards
+            const recentList = document.getElementById('recent-list');
+            recentList.innerHTML = ''; // Clear existing
+
+            unlockedBadges.forEach(badgeId => {
+                const el = document.getElementById(`badge-${badgeId}`);
+                if (el) {
+                    el.classList.remove('locked');
+                    el.classList.add('unlocked');
+                    el.querySelector('.badge-status').innerText = 'Unlocked';
+                    el.querySelector('.lock-overlay').style.display = 'none';
+
+                    // Add to recent
+                    const item = document.createElement('div');
+                    item.className = 'recent-item';
+                    const icon = el.querySelector('.badge-icon-wrap i').className;
+                    item.innerHTML = `
+                        <i class="${icon}"></i>
+                        <div class="recent-info">
+                            <div class="recent-name">${el.querySelector('.badge-name').innerText}</div>
+                            <div class="recent-date">Unlocked</div>
+                        </div>
+                    `;
+                    recentList.appendChild(item);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAchievements);
+    </script>
+    <script src="navigation.js"></script>
+    <script src="mr-nova.js"></script>
+</body>
+
+</html>

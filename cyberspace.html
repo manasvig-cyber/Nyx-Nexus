@@ -1,0 +1,2901 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    if (localStorage.getItem("cyberLoggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+    function logoutCyberSpace() {
+      localStorage.removeItem("cyberLoggedIn");
+      window.location.href = "login.html";
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nyx Nexus – The Digital Realm</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* ============================================================
+     GLOBAL RESET & BASE
+  ============================================================ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 14px;
+    }
+
+    :root {
+      --bg-deep: #090e24;
+      --bg-mid: #1e1136;
+      --bg-card: rgba(22, 16, 44, 0.85);
+      --bg-card2: rgba(26, 18, 50, 0.90);
+      --purple: #7c3aed;
+      --purple-l: #a855f7;
+      --blue: #3b82f6;
+      --blue-l: #60a5fa;
+      --orange: #f97316;
+      --orange-l: #fb923c;
+      --pink: #ec4899;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --text-main: #e2e8f0;
+      --text-sub: #94a3b8;
+      --text-dim: #64748b;
+      --border-purple: rgba(139, 92, 246, 0.55);
+      --border-orange: rgba(249, 115, 22, 0.55);
+      --border-blue: rgba(59, 130, 246, 0.45);
+      --glow-purple: 0 0 16px rgba(139, 92, 246, 0.55), 0 0 32px rgba(139, 92, 246, 0.25);
+      --glow-orange: 0 0 16px rgba(249, 115, 22, 0.60), 0 0 32px rgba(249, 115, 22, 0.28);
+      --glow-blue: 0 0 14px rgba(59, 130, 246, 0.50), 0 0 28px rgba(59, 130, 246, 0.22);
+      --glow-cyan: 0 0 14px rgba(6, 182, 212, 0.50), 0 0 28px rgba(6, 182, 212, 0.20);
+      --sidebar-w: 95px;
+      --right-w: 85px;
+      --topbar-h: 56px;
+      --gold: #ffd700;
+      --gold-l: #fff2ac;
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.3);
+    }
+
+    body {
+      font-family: 'Exo 2', 'Rajdhani', sans-serif;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .bg-animation {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .shooting-star {
+      position: absolute;
+      width: 140px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), transparent);
+      opacity: 0.25;
+      animation: shoot 6s infinite ease-in;
+    }
+
+    @keyframes shoot {
+      0% {
+        transform: translateX(-10vw) translateY(0) rotate(25deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(120vw) translateY(60vh) rotate(25deg);
+        opacity: 0;
+      }
+    }
+
+    /* ============================================================
+     ANIMATED STAR / PARTICLE BACKGROUND
+  ============================================================ */
+    .stars-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stars-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        /* Top purple glow */
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(120, 40, 200, 0.12) 0%, transparent 65%),
+        /* Bottom-left blue glow */
+        radial-gradient(ellipse 60% 50% at 0% 100%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
+        /* Central prominent brown-gold glow */
+        radial-gradient(ellipse 85% 65% at 50% 55%, rgba(139, 69, 19, 0.25) 0%, rgba(184, 134, 11, 0.12) 42%, transparent 78%),
+        /* Right orange glow */
+        radial-gradient(ellipse 50% 40% at 100% 60%, rgba(249, 115, 22, 0.05) 0%, transparent 55%);
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--dur, 3s) var(--del, 0s) infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: .1;
+        transform: scale(1)
+      }
+
+      100% {
+        opacity: .8;
+        transform: scale(1.4)
+      }
+    }
+
+    /* ============================================================
+     AMBIENT GLOW ORBS
+  ============================================================ */
+    @keyframes orbScreen {
+      from {
+        opacity: 0;
+      }
+
+      25% {
+        opacity: 0.12;
+        transform: scale3d(2, 2, 2);
+      }
+
+      50% {
+        opacity: 0.25;
+      }
+
+      75% {
+        opacity: 0.35;
+      }
+
+      to {
+        opacity: 0;
+      }
+    }
+
+    .ambient-orb {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      animation: orbScreen infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-orb:nth-child(1) {
+      top: 10%;
+      left: 15%;
+      background: radial-gradient(ellipse cover, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+      animation-duration: 12s;
+      animation-delay: 0s;
+    }
+
+    .ambient-orb:nth-child(2) {
+      top: 60%;
+      left: 5%;
+      background: radial-gradient(ellipse cover, rgba(249, 115, 22, 0.35) 0%, transparent 70%);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.2);
+      animation-duration: 18s;
+      animation-delay: 2s;
+    }
+
+    .ambient-orb:nth-child(3) {
+      top: 75%;
+      left: 80%;
+      background: radial-gradient(ellipse cover, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+      animation-duration: 15s;
+      animation-delay: 4s;
+    }
+
+    .ambient-orb:nth-child(4) {
+      top: 5%;
+      left: 85%;
+      background: radial-gradient(ellipse cover, rgba(236, 72, 153, 0.4) 0%, transparent 70%);
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.2);
+      animation-duration: 10s;
+      animation-delay: 1s;
+      width: 250px;
+      height: 250px;
+    }
+
+    .ambient-orb:nth-child(5) {
+      top: 40%;
+      left: 30%;
+      background: radial-gradient(ellipse cover, rgba(6, 182, 212, 0.35) 0%, transparent 70%);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+      animation-duration: 14s;
+      animation-delay: 3s;
+    }
+
+    .ambient-orb:nth-child(6) {
+      top: 45%;
+      left: 65%;
+      background: radial-gradient(ellipse cover, rgba(168, 85, 247, 0.35) 0%, transparent 70%);
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+      animation-duration: 16s;
+      animation-delay: 5s;
+      width: 200px;
+      height: 200px;
+    }
+
+    /* ============================================================
+     LAYOUT SHELL
+  ============================================================ */
+    .shell {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr var(--right-w);
+      grid-template-rows: var(--topbar-h) 1fr;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+     LEFT SIDEBAR
+  ============================================================ */
+    .sidebar-left {
+      grid-row: 1 / 3;
+      grid-column: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: transparent;
+      border: none;
+      backdrop-filter: none;
+      z-index: 100;
+      padding: 0;
+    }
+
+    .sidebar-inner {
+      background: rgba(18, 14, 34, 0.85);
+      border: 1px solid rgba(139, 92, 246, 0.20);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      width: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      gap: 12px;
+      margin: 20px 0;
+      height: calc(100% - 40px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      /* 3D Sidebar Slab */
+      box-shadow:
+        -1px -1px 0 rgba(79, 70, 229, 0.4),
+        -2px -2px 0 rgba(124, 58, 237, 0.4),
+        -3px -3px 0 rgba(124, 58, 237, 0.3),
+        -4px -4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar-inner:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+    }
+
+    .sidebar-right-inner {
+      background: rgba(18, 14, 34, 0.85);
+      border: 1px solid rgba(139, 92, 246, 0.20);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      width: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      gap: 12px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      /* 3D Capsule Slab */
+      box-shadow:
+        -1px -1px 0 rgba(79, 70, 229, 0.4),
+        -2px -2px 0 rgba(124, 58, 237, 0.4),
+        -3px -3px 0 rgba(124, 58, 237, 0.3),
+        -4px -4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar-right-inner:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+      z-index: 110;
+    }
+
+    .sidebar-right-inner.top {
+      margin-top: 20px;
+      height: auto;
+    }
+
+    .sidebar-right-inner.bottom {
+      margin-top: 15px;
+      margin-bottom: 20px;
+      height: 320px;
+      /* Increased length */
+    }
+
+    .sidebar-left .avatar-self {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--purple-l);
+      box-shadow: var(--glow-purple);
+      overflow: hidden;
+      margin-top: 10px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #7c3aed, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sidebar-left .nav-sep {
+      width: 28px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+      margin: 4px 0;
+    }
+
+    .nav-item {
+      position: relative;
+      width: 52px;
+      height: 52px;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 52px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.5s;
+      margin-bottom: 8px;
+    }
+
+    .nav-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 52px;
+      background: linear-gradient(45deg, var(--i), var(--j));
+      opacity: 0;
+      transition: 0.5s;
+    }
+
+    .nav-item::after {
+      content: "";
+      position: absolute;
+      top: 5px;
+      width: 100%;
+      height: 100%;
+      border-radius: 52px;
+      background: linear-gradient(45deg, var(--i), var(--j));
+      transition: 0.5s;
+      filter: blur(15px);
+      z-index: -1;
+      opacity: 0;
+    }
+
+    .nav-item:hover {
+      width: 110px;
+      /* Smaller length */
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
+      justify-content: center;
+      /* Shift right by half of the width increase (110-52)/2 = 29px */
+      /* This keeps the left edge and icon center in original position */
+      transform: translateX(29px);
+      z-index: 1000;
+    }
+
+    .nav-item:hover::before {
+      opacity: 1;
+    }
+
+    .nav-item:hover::after {
+      opacity: 0.5;
+    }
+
+    .nav-item i {
+      color: var(--text-sub);
+      font-size: 1.2rem;
+      transition: 0.5s;
+      transition-delay: 0.2s;
+      z-index: 10;
+      animation: iconFloat 4s infinite ease-in-out;
+    }
+
+    .nav-item:hover i {
+      transform: scale(0);
+      color: #fff;
+      transition-delay: 0s;
+      animation: none;
+    }
+
+    .nav-item .nav-label {
+      position: absolute;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transform: scale(0);
+      transition: 0.5s;
+      transition-delay: 0s;
+      z-index: 10;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .nav-item:hover .nav-label {
+      transform: scale(1);
+      transition-delay: 0.2s;
+    }
+
+    .nav-item.active::before {
+      opacity: 0.4;
+    }
+
+    .nav-item.active::after {
+      opacity: 0.2;
+    }
+
+    .nav-item.active i {
+      color: #fff;
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* ============================================================
+     TOP NAVIGATION BAR
+  ============================================================ */
+    .topbar {
+      grid-column: 2;
+      grid-row: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 40px;
+      gap: 30px;
+      background: transparent;
+      border: none;
+      backdrop-filter: none;
+      z-index: 100;
+    }
+
+    .btn {
+      position: relative;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      min-width: 140px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: 'Rajdhani', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .btn-search {
+      min-width: 200px;
+      cursor: text;
+    }
+
+    .search-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Magnetic Field Button Style */
+    .magnetic {
+      background: rgba(45, 45, 45, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: visible;
+      backdrop-filter: blur(8px);
+    }
+
+    .particles-field {
+      position: absolute;
+      inset: -100%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #fff;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+    }
+
+    .magnetic:hover {
+      background: rgba(60, 60, 60, 0.6);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .magnetic:hover .particles-field {
+      opacity: 1;
+    }
+
+    /* Code Rain Animation Effect */
+    .code-rain {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: 0.3s;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .magnetic:hover .code-rain {
+      opacity: 1;
+      animation: rain 1.2s linear infinite;
+    }
+
+    @keyframes rain {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    /* Search Button Rain (Silver/White) */
+    .btn-search .code-rain {
+      background: linear-gradient(180deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.18) 50%,
+          rgba(255, 255, 255, 0) 100%);
+    }
+
+    /* Streaks Button Rain (Orange to match existing color) */
+    .btn-streaks .code-rain {
+      background: linear-gradient(180deg,
+          rgba(249, 115, 22, 0) 0%,
+          rgba(249, 115, 22, 0.3) 50%,
+          rgba(249, 115, 22, 0) 100%);
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+      }
+
+      50% {
+        transform: translate(calc(var(--x) * -0.5), calc(var(--y) * -0.5)) scale(1);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+      }
+    }
+
+    .magnetic i {
+      font-size: 1.1rem;
+    }
+
+    /* ============================================================
+     MAIN CONTENT AREA
+  ============================================================ */
+    .main {
+      grid-column: 2;
+      grid-row: 2;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 10px 60px 60px 60px;
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      grid-template-rows: auto auto auto;
+      column-gap: 48px;
+      row-gap: 22px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .main::-webkit-scrollbar {
+      display: none;
+    }
+
+    .neon-border {
+      position: relative;
+      border-radius: 18px;
+      padding: 5px;
+      background: linear-gradient(135deg, #1e3a8a, #5b2d18, #7c3aed, #ff00cc);
+      z-index: 1;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      /* 3D Top-Left Slab - Dark Purple & Brown Gradient */
+      box-shadow:
+        -1px -1px 0 #3b0764,
+        /* Dark Purple */
+        -2px -2px 0 #451a03,
+        /* Deep Brown */
+        -3px -3px 0 #78350f,
+        /* Rich Brown */
+        -4px -4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .neon-border:hover {
+      box-shadow:
+        -2px -2px 0 #581c87,
+        -4px -4px 0 #92400e,
+        -6px -6px 25px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(124, 58, 237, 0.4);
+      transform: scale(1.06) translateY(-6px);
+      z-index: 10;
+    }
+
+    .neon-border::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      background:
+        linear-gradient(105deg,
+          transparent 10%,
+          rgba(218, 165, 32, 0.75) 18%,
+          rgba(255, 235, 120, 1) 25%,
+          rgba(218, 165, 32, 0.75) 32%,
+          transparent 50%),
+        linear-gradient(285deg,
+          transparent 10%,
+          rgba(218, 165, 32, 0.75) 18%,
+          rgba(255, 235, 120, 1) 22%,
+          rgba(218, 165, 32, 0.75) 26%,
+          transparent 40%);
+      z-index: 1;
+    }
+
+    .neon-border.gold-glow {
+      background: linear-gradient(135deg, #b8860b, #ffd700, #ffec8b, #b8860b) !important;
+      box-shadow: var(--glow-gold) !important;
+    }
+
+    .neon-border.gold-glow::after {
+      background:
+        linear-gradient(105deg,
+          transparent 10%,
+          rgba(255, 255, 255, 0.8) 22%,
+          rgba(255, 215, 0, 1) 25%,
+          rgba(255, 255, 255, 0.8) 28%,
+          transparent 50%),
+        linear-gradient(285deg,
+          transparent 10%,
+          rgba(255, 255, 255, 0.8) 18%,
+          rgba(255, 215, 0, 1) 22%,
+          rgba(255, 255, 255, 0.8) 26%,
+          transparent 40%) !important;
+    }
+
+    .box-content {
+      background: linear-gradient(145deg, #0f0c29, #1a1235);
+      border-radius: 16px;
+      padding: 20px;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .hero .box-content {
+      flex-direction: row;
+      align-items: center;
+      padding: 24px 32px;
+      overflow: visible;
+      /* Allow head to pop out */
+    }
+
+    .downloads-section .box-content {
+      justify-content: center;
+    }
+
+    /* ============================================================
+     HERO BANNER
+  ============================================================ */
+    .hero {
+      grid-column: 1;
+      grid-row: 1;
+      position: relative;
+      min-height: 150px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: visible;
+      /* Amplified 3D Top-Left Slab - Deep Purple to Rich Brown Gradient */
+      background: rgba(18, 14, 34, 0.95);
+      border: 2px solid #daa520;
+      border-radius: 20px;
+      box-shadow:
+        inset 0 -1px 3px rgba(0, 0, 0, 0.6),
+        /* Bottom rim shadow */
+        -1px -1px 0 #3b0764,
+        /* Vivid Dark Purple level 1 */
+        -2px -2px 0 #581c87,
+        /* Vivid Dark Purple level 2 */
+        -3px -3px 0 #3b0764,
+        /* Vivid Dark Purple level 3 */
+        -4px -4px 0 #581c87,
+        /* Vivid Dark Purple level 4 */
+        -5px -5px 0 #7e22ce,
+        /* Vibrant Purple Mid-point */
+        -6px -6px 0 #451a03,
+        /* Rich Brown level 6 */
+        -7px -7px 0 #78350f,
+        /* Rich Brown level 7 */
+        -8px -8px 0 #451a03,
+        /* Rich Brown level 8 */
+        -9px -9px 0 #78350f,
+        /* Rich Brown level 9 */
+        -10px -10px 0 #92400e,
+        /* Rich Brown level 10 */
+        -11px -11px 0 #78350f,
+        /* Rich Brown level 11 */
+        -12px -12px 0 #451a03,
+        /* Rich Brown level 12 */
+        -13px -13px 35px rgba(0, 0, 0, 0.85);
+      /* Deep ground shadow */
+    }
+
+    .hero:hover {
+      transform: translateY(-2px);
+      scale: 1 !important;
+    }
+
+    .hero-text {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-text h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 10;
+      /* 8-layer 3D extrusion in Gold */
+      text-shadow:
+        0 0 25px rgba(172, 149, 21, 0.8),
+        0 0 50px rgba(255, 215, 0, 0.4),
+        -0.8px -0.6px 0 #b8860b,
+        -1.6px -1.2px 0 #8d6605,
+        -2.4px -1.8px 0 #b8860b,
+        -3.2px -2.4px 0 #daa520,
+        -4.0px -3.0px 0 #daa520,
+        -4.8px -3.6px 0 #daa520,
+        -5.6px -4.2px 0 #b8860b,
+        -6.4px -4.8px 0 rgba(0, 0, 0, 0.5);
+      transform: translate(6.4px, 4.8px);
+    }
+
+    .hero-text p {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: rgba(255, 255, 255, 0.90);
+      text-transform: uppercase;
+    }
+
+    /* Premium Avatar Integration - Solid Opaque Overlay */
+    .hero-char {
+      position: absolute;
+      right: -60px;
+      bottom: -60px;
+      width: 480px;
+      height: 250px;
+      object-fit: contain;
+      z-index: 100;
+      pointer-events: none;
+      filter: contrast(1.1) brightness(1.1);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Ambient radial light behind the avatar to integrate it into the background */
+    .hero-lighting {
+      position: absolute;
+      right: -10px;
+      bottom: -20px;
+      width: 240px;
+      height: 240px;
+      background: transparent;
+      z-index: 5;
+      pointer-events: none;
+      filter: blur(20px);
+    }
+
+    /* Refined Neck Burst (Light Rays + Bright Core) */
+    .hero-burst {
+      position: absolute;
+      right: 40px;
+      /* Positioned directly behind the back area */
+      top: -40px;
+      width: 400px;
+      height: 400px;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      mix-blend-mode: screen;
+    }
+
+    /* Constant Atmospheric Light Rays & Multi-Color Crackers (Purple, Gold, Pink, Blue, Brown) */
+    .hero-burst::before {
+      content: "";
+      position: absolute;
+      inset: -50px;
+      background:
+        /* High density Gold and White Sparkles */
+        radial-gradient(circle at 45% 45%, #ffd700 2.5px, transparent 2.5px),
+        radial-gradient(circle at 75% 15%, #ffec8b 2px, transparent 2px),
+        radial-gradient(circle at 60% 40%, #ffd700 2.2px, transparent 2.2px),
+        radial-gradient(circle at 80% 80%, #fff2ac 1.5px, transparent 1.5px),
+        radial-gradient(circle at 55% 65%, #ffd700 2px, transparent 2px),
+        radial-gradient(circle at 25% 35%, #ffec8b 1.8px, transparent 1.8px),
+        radial-gradient(circle at 15% 85%, #ffd700 2px, transparent 2px),
+        radial-gradient(circle at 50% 20%, #ffec8b 1.5px, transparent 1.5px),
+        radial-gradient(circle at 35% 25%, #ffd700 2.5px, transparent 2.5px),
+        radial-gradient(circle at 65% 15%, #fff2ac 1.8px, transparent 1.8px),
+        radial-gradient(circle at 15% 65%, #ffd700 2.1px, transparent 2.1px),
+        radial-gradient(circle at 48% 52%, #ffec8b 1.5px, transparent 1.5px),
+        radial-gradient(circle at 52% 48%, #ffd700 2px, transparent 2px),
+        radial-gradient(circle at 32% 42%, #fff2ac 1.2px, transparent 1.2px),
+        radial-gradient(circle at 62% 62%, #ffd700 1.8px, transparent 1.8px),
+        radial-gradient(circle at 22% 58%, #ffec8b 1.5px, transparent 1.5px),
+        radial-gradient(circle at 72% 38%, #ffd700 2px, transparent 2px),
+        radial-gradient(circle at 82% 78%, #fff2ac 2px, transparent 2px),
+        radial-gradient(circle at 85% 55%, #ffd700 1.5px, transparent 1.5px),
+        radial-gradient(circle at 45% 85%, #ffec8b 1.6px, transparent 1.6px),
+        radial-gradient(circle at 55% 15%, #ffd700 1.4px, transparent 1.4px),
+        radial-gradient(circle at 28% 68%, #ffec8b 1.5px, transparent 1.5px),
+        radial-gradient(circle at 12% 52%, #ffd700 1.2px, transparent 1.2px),
+        radial-gradient(circle at 88% 38%, #fff2ac 1.6px, transparent 1.6px),
+        radial-gradient(circle at 58% 82%, #ffd700 1.3px, transparent 1.3px);
+      -webkit-mask-image: radial-gradient(circle, white 0%, transparent 90%);
+      mask-image: radial-gradient(circle, white 0%, transparent 90%);
+      filter: blur(0.3px) drop-shadow(0 0 5px #ffd700);
+    }
+
+    /* Multi-Color High-Intensity Bloom Core (Purple, Blue, Pink, Gold, Brown) */
+    .hero-burst::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: #fcc212;
+      border-radius: 50%;
+      filter: blur(5px);
+      box-shadow:
+        0 0 25px 12px rgba(252, 206, 0, 0.912),
+        0 0 50px 25px rgba(218, 165, 32, 0.5),
+        0 0 80px 40px rgba(139, 69, 19, 0.3);
+    }
+
+    @keyframes rayPulse {
+      0% {
+        opacity: 0.6;
+        transform: rotate(0deg) scale(0.95);
+      }
+
+      100% {
+        opacity: 1;
+        transform: rotate(2deg) scale(1.05);
+      }
+    }
+
+    @keyframes corePulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: scale(1.25);
+        opacity: 1;
+      }
+    }
+
+    .hero:hover .hero-char {
+      transform: translateY(-5px);
+    }
+
+    /* sparkle corner icon */
+    .hero-icon {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 4;
+      width: 26px;
+      height: 26px;
+      background: rgba(214, 101, 20, 0.797);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--orange-l);
+      font-size: 0.75rem;
+    }
+
+    /* ============================================================
+     RIGHT PANEL (Active Labs + Friends)
+  ============================================================ */
+    .right-panel {
+      grid-column: 2;
+      grid-row: 1 / 4;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card {
+      position: relative;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Redundant hover removed to favor neon-border:hover zoom */
+
+    .card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* ACTIVE LABS */
+    .active-labs {
+      min-height: 180px;
+    }
+
+    .lab-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      background: rgba(139, 92, 246, 0.06);
+      cursor: pointer;
+      transition: all 0.22s;
+      margin-bottom: 8px;
+    }
+
+    .lab-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .lab-item:hover {
+      background: rgba(139, 92, 246, 0.12);
+      border-color: rgba(139, 92, 246, 0.35);
+      transform: translateX(3px);
+    }
+
+    .lab-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .lab-icon.red {
+      background: rgba(239, 68, 68, 0.22);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .lab-icon.blue {
+      background: rgba(59, 130, 246, 0.22);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .lab-icon.gray {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .lab-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .lab-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lab-status {
+      font-size: 0.70rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 1px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.green {
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    .dot.orange {
+      background: var(--orange);
+      box-shadow: 0 0 6px var(--orange);
+    }
+
+    /* FRIENDS ONLINE */
+    .friends-box {
+      min-height: 250px;
+    }
+
+    .friends-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .friends-header .view-more {
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: color 0.2s;
+    }
+
+    .friends-header .view-more:hover {
+      color: var(--purple-l);
+    }
+
+    .friend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.22s;
+      margin-bottom: 6px;
+    }
+
+    .friend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .friend-item:hover {
+      background: rgba(139, 92, 246, 0.12);
+      border-color: rgba(139, 92, 246, 0.35);
+      transform: translateX(3px);
+    }
+
+    .friend-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(139, 92, 246, 0.5);
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .fa1 {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    }
+
+    .fa2 {
+      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    }
+
+    .fa3 {
+      background: linear-gradient(135deg, #06b6d4, #10b981);
+    }
+
+    .fa4 {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+    }
+
+    .friend-info {
+      flex: 1;
+    }
+
+    .friend-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .friend-status {
+      font-size: 0.70rem;
+      color: var(--text-sub);
+      margin-top: 1px;
+    }
+
+    .friend-arrow {
+      color: var(--text-dim);
+      font-size: 0.7rem;
+      transition: color 0.2s;
+    }
+
+    .friend-item:hover .friend-arrow {
+      color: var(--purple-l);
+    }
+
+    /* ============================================================
+     BOTTOM ROW: Performance Analytics + XP Trends
+  ============================================================ */
+    .bottom-row {
+      grid-column: 1;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      position: relative;
+      z-index: 200;
+      /* Covers hero character overflow */
+    }
+
+    /* ---- PERFORMANCE ANALYTICS ---- */
+    .perf-card {
+      position: relative;
+      min-height: 220px;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .perf-card:hover {
+      transform: translateY(-8px) perspective(1000px) rotateX(2deg) scale(1.04);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .perf-card:hover .perf-wave path:last-of-type {
+      stroke-width: 6;
+      filter: drop-shadow(0 0 18px rgba(255, 102, 0, 1));
+    }
+
+    .perf-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .perf-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 40%,
+          rgba(255, 80, 0, 0.15),
+          transparent 60%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .perf-wave {
+      position: absolute;
+      bottom: 15px;
+      left: 0;
+      width: 100%;
+      height: 75%;
+      opacity: 0.85;
+      animation: waveMove 6s ease-in-out infinite alternate;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes waveMove {
+      0% {
+        transform: translateY(5px);
+      }
+
+      100% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .spark {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: orange;
+      border-radius: 50%;
+      top: 30%;
+      left: 50%;
+      box-shadow: 0 0 10px orange;
+      animation: sparkMove 4s linear infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes sparkMove {
+      0% {
+        transform: translate(0, 0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-100px, -60px);
+        opacity: 0;
+      }
+    }
+
+    /* Hover handled above */
+
+    .perf-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .perf-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #e5e7eb;
+    }
+
+    .perf-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #a855f7, #6b21a8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    .life-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #9ca3af;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+    }
+
+    .life-icon {
+      width: 18px;
+      height: 18px;
+      background: #22c55e;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.55rem;
+      font-weight: 800;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 100, 100, 0.1);
+      box-shadow: inset 0 0 20px rgba(255, 80, 0, 0.05);
+      border-radius: 12px;
+      padding: 14px 18px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #d1d5db;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+
+    .stat-change {
+      font-size: 0.75rem;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* Bar Chart */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 8px;
+      height: 90px;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+
+    .bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      min-width: 8px;
+      max-width: 20px;
+      transition: transform 0.2s, filter 0.2s;
+    }
+
+    .bar:hover {
+      transform: scaleY(1.05);
+      filter: brightness(1.3);
+    }
+
+    .bar-dim {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .bar-blue {
+      background: linear-gradient(to top, rgba(30, 64, 175, 0.2), #3b82f6);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .bar-purple {
+      background: linear-gradient(to top, rgba(107, 33, 168, 0.2), #a855f7, #e879f9);
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    }
+
+    .bar-orange {
+      background: linear-gradient(to top, rgba(194, 65, 12, 0.2), #ff6600, #ffcc00);
+      box-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
+    }
+
+    .perf-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 5px;
+    }
+
+    .time-select-plain {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: white;
+      font-size: 0.85rem;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+    }
+
+    .time-select-red {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: white;
+      font-size: 0.85rem;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 60, 60, 0.6);
+      background: rgba(255, 20, 20, 0.15);
+      box-shadow: 0 0 12px rgba(255, 50, 50, 0.4);
+    }
+
+    .time-select {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.74rem;
+      color: var(--text-sub);
+      cursor: pointer;
+      padding: 4px 10px;
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 14px;
+      background: rgba(139, 92, 246, 0.08);
+      transition: all 0.2s;
+    }
+
+    .time-select:hover {
+      border-color: rgba(139, 92, 246, 0.55);
+      color: #fff;
+      background: rgba(139, 92, 246, 0.18);
+      box-shadow: var(--glow-purple);
+    }
+
+    /* ---- XP TRENDS ---- */
+    .xp-card {
+      position: relative;
+      min-height: 220px;
+      transition: all 0.4s ease;
+    }
+
+    .xp-card:hover {
+      transform: translateY(-8px) scale(1.04);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .xp-card:hover .box-content::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent, rgba(139, 92, 246, 0.05), transparent);
+      animation: scanline 2s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    .xp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .xp-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .xp-card svg {
+      animation: xpHueShift 6s linear infinite;
+    }
+
+    @keyframes xpHueShift {
+      0% {
+        filter: hue-rotate(0deg);
+      }
+
+      50% {
+        filter: hue-rotate(20deg);
+      }
+
+      100% {
+        filter: hue-rotate(0deg);
+      }
+    }
+
+    .xp-card path {
+      transition: all 0.3s ease;
+    }
+
+    .xp-card:hover path {
+      filter: drop-shadow(0 0 12px rgba(124, 58, 237, 0.9)) drop-shadow(0 0 25px rgba(249, 115, 22, 0.8));
+    }
+
+    /* SVG Wave Chart */
+    .wave-chart-wrap {
+      width: 100%;
+      height: 120px;
+      position: relative;
+      margin-top: 40px;
+    }
+
+    .wave-chart-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .x-labels {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 4px;
+      margin-top: 6px;
+    }
+
+    .x-labels span {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+    }
+
+    /* ============================================================
+     BOTTOM WIDGETS (DOWNLOADS & GAME CARDS)
+  ============================================================ */
+    .bottom-widgets {
+      grid-column: 1;
+      grid-row: 3;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 16px;
+      min-height: 105px;
+      margin-top: 30px;
+      position: relative;
+      z-index: 200;
+    }
+
+    .downloads-section {
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .download-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(139, 92, 246, 0.22);
+      background: rgba(139, 92, 246, 0.06);
+      cursor: pointer;
+      transition: all 0.22s;
+    }
+
+    .download-item:hover {
+      background: rgba(139, 92, 246, 0.14);
+      border-color: rgba(139, 92, 246, 0.5);
+      transform: translateX(6px);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .download-item:hover .progress-bar-fill {
+      animation: progressPulse 1.5s infinite;
+    }
+
+    .download-item:hover .dl-flame i {
+      animation: flamePulse 0.8s infinite alternate;
+    }
+
+    @keyframes progressPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
+      }
+
+      50% {
+        box-shadow: 0 0 22px rgba(249, 115, 22, 1);
+        filter: brightness(1.2);
+      }
+    }
+
+    .dl-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(30, 20, 80, 0.9), rgba(50, 30, 100, 0.9));
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--purple-l);
+      letter-spacing: -0.02em;
+      font-family: 'Orbitron', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .dl-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dl-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .dl-meta {
+      font-size: 0.6rem;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      /* Back to compact height */
+      background: rgba(139, 92, 246, 0.15);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #7c3aed, #f97316, #ef4444);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
+      width: 34%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .dl-wave-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.6;
+      z-index: 1;
+    }
+
+    .dl-wave-overlay svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .progress-arrow {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 14px solid rgba(249, 115, 22, 0.4);
+    }
+
+    .dl-time {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      flex-shrink: 0;
+      min-width: 80px;
+    }
+
+    .dl-time-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+
+    .dl-time-label {
+      font-size: 0.55rem;
+      color: var(--text-sub);
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .dl-flame {
+      color: #fb923c;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      margin-left: 6px;
+      filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6));
+    }
+
+    /* Small Game Cards */
+    .game-card-small {
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: visible;
+    }
+
+    .game-card-small:hover {
+      transform: translateY(-8px) scale(1.08);
+      z-index: 10;
+    }
+
+    .game-card-small:hover .gcs-img {
+      filter: brightness(1.2) contrast(1.1);
+      transform: scale(1.1);
+    }
+
+    .game-card-small .gcs-img {
+      transition: all 0.5s ease;
+    }
+
+    .gcs-img {
+      height: 55%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      background-color: #1a1024;
+    }
+
+    .gcs-follow {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      color: #fff;
+      font-size: 0.55rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-family: 'Rajdhani', sans-serif;
+      text-transform: uppercase;
+      box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+    }
+
+    .gcs-info {
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .gcs-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gcs-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+
+    .gcs-tag {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), #ec4899);
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.55rem;
+      box-shadow: 0 0 5px rgba(218, 149, 19, 0.5);
+    }
+
+    @keyframes flamePulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 14px rgba(249, 115, 22, 0.5);
+        transform: scale(1);
+      }
+
+      50% {
+        box-shadow: 0 0 24px rgba(249, 115, 22, 0.9);
+        transform: scale(1.06);
+      }
+    }
+
+    /* ============================================================
+     RIGHT SIDEBAR (avatar strip)
+  ============================================================ */
+    .sidebar-right {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: transparent;
+      border: none;
+      backdrop-filter: none;
+      z-index: 100;
+    }
+
+    .r-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      /* Larger for character icons */
+      font-weight: 700;
+      transition: all 0.22s;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .r-avatar .char-inner {
+      animation: floatBreath 3s infinite ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .r-avatar .char-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    @keyframes floatBreath {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1.0);
+      }
+
+      50% {
+        transform: translateY(-4px) scale(1.1);
+      }
+    }
+
+    .r-avatar:hover {
+      transform: scale(1.18);
+      border-color: var(--purple-l);
+      box-shadow: var(--glow-purple);
+    }
+
+    .r-avatar.active {
+      border-color: var(--orange);
+      box-shadow: var(--glow-orange);
+    }
+
+    .r-av1 {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    }
+
+    .r-av2 {
+      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    }
+
+    .r-av3 {
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+    }
+
+    .r-av4 {
+      background: linear-gradient(135deg, #f97316, #ef4444);
+    }
+
+    .r-av5 {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+    }
+
+    .r-av6 {
+      background: linear-gradient(135deg, #f59e0b, #84cc16);
+    }
+
+    .r-av7 {
+      background: linear-gradient(135deg, #7c3aed, #db2777);
+    }
+
+    .r-collapse {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      background: rgba(139, 92, 246, 0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-sub);
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: auto;
+      transition: all 0.22s;
+    }
+
+    .r-collapse:hover {
+      background: rgba(139, 92, 246, 0.25);
+      color: #fff;
+      box-shadow: var(--glow-purple);
+    }
+
+    /* ============================================================
+     GLOWING CORNERS / DECORATIONS
+  ============================================================ */
+    .corner-tl,
+    .corner-tr,
+    .corner-bl,
+    .corner-br {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .neon-border.gold-glow .corner-tl,
+    .neon-border.gold-glow .corner-tr,
+    .neon-border.gold-glow .corner-bl,
+    .neon-border.gold-glow .corner-br {
+      border-color: #fff;
+      filter: drop-shadow(0 0 5px #ffcc00);
+      width: 15px;
+      height: 15px;
+    }
+
+    .corner-tl {
+      top: 0;
+      left: 0;
+      border-top: 2px solid var(--orange);
+      border-left: 2px solid var(--orange);
+      border-radius: 4px 0 0 0;
+    }
+
+    .corner-tr {
+      top: 0;
+      right: 0;
+      border-top: 2px solid var(--orange);
+      border-right: 2px solid var(--orange);
+      border-radius: 0 4px 0 0;
+    }
+
+    .corner-bl {
+      bottom: 0;
+      left: 0;
+      border-bottom: 2px solid var(--orange);
+      border-left: 2px solid var(--orange);
+      border-radius: 0 0 0 4px;
+    }
+
+    .corner-br {
+      bottom: 0;
+      right: 0;
+      border-bottom: 2px solid var(--orange);
+      border-right: 2px solid var(--orange);
+      border-radius: 0 0 4px 0;
+    }
+
+    /* ============================================================
+     PULSE ANIMATIONS
+  ============================================================ */
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes borderGlow {
+
+      0%,
+      100% {
+        box-shadow: var(--glow-purple);
+      }
+
+      50% {
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.85), 0 0 60px rgba(139, 92, 246, 0.40);
+      }
+    }
+
+    /* ============================================================
+     GRID OVERLAY (subtle)
+  ============================================================ */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image:
+        linear-gradient(rgba(139, 92, 246, 1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139, 92, 246, 1) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ============================================================
+     SCROLLBAR for wave Y-labels
+  ============================================================ */
+    .y-labels {
+      position: absolute;
+      left: -24px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .y-labels span {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.62rem;
+      color: var(--text-dim);
+    }
+
+    .wave-container {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    /* ============================================================
+     Y-axis gridlines for perf chart
+  ============================================================ */
+    .chart-area {
+      position: relative;
+    }
+
+    .chart-grid {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .chart-grid-line {
+      width: 100%;
+      height: 1px;
+      background: rgba(139, 92, 246, 0.12);
+    }
+
+    /* hover tooltip for bars */
+    .bar-tooltip {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(12, 8, 40, 0.95);
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      font-size: 0.65rem;
+      color: #fff;
+      padding: 3px 7px;
+      border-radius: 5px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .bar-group:hover .bar-tooltip {
+      opacity: 1;
+    }
+
+    .bar-group {
+      position: relative;
+    }
+
+    /* ============================================================
+     RESPONSIVE / SMALL SCREENS
+  ============================================================ */
+    @media (max-width:900px) {
+      .right-panel {
+        display: none;
+      }
+
+      .main {
+        grid-template-columns: 1fr;
+      }
+
+      .bottom-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="cyber-notifications.css">
+</head>
+
+<body>
+
+  <!-- BACKGROUND LAYERS -->
+  <div class="bg-animation">
+    <div class="stars"></div>
+    <div class="shooting-star" style="top: 10%; animation-delay: 0s;"></div>
+    <div class="shooting-star" style="top: 40%; animation-delay: 2s;"></div>
+    <div class="shooting-star" style="top: 70%; animation-delay: 4.5s;"></div>
+  </div>
+  <div class="stars-bg" id="starsBg"></div>
+
+  <!-- Add pulsing ambient orbs derived from user request, using theme colors -->
+  <div class="bg-animation">
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+  </div>
+
+  <div class="grid-overlay"></div>
+
+  <!-- MAIN LAYOUT SHELL -->
+  <div class="shell">
+
+    <!-- ===================== LEFT SIDEBAR ===================== -->
+    <nav class="sidebar-left">
+      <div class="sidebar-inner">
+        <div class="avatar-self">NN</div>
+        <div class="nav-sep"></div>
+
+        <div class="nav-item active" style="--i: #7c3aed; --j: #3b82f6;">
+          <i class="fas fa-house"></i>
+          <span class="nav-label">Dashboard</span>
+        </div>
+        <div class="nav-item" style="--i: #06b6d4; --j: #22c55e;" onclick="window.location.href='games.html'">
+          <i class="fas fa-gamepad"></i>
+          <span class="nav-label">Games</span>
+        </div>
+        <div class="nav-item" style="--i: #ff00cc; --j: #3333ff;" onclick="window.location.href='learning-path.html'">
+          <i class="fas fa-route"></i>
+          <span class="nav-label">Learning Paths</span>
+        </div>
+        <div class="nav-item" style="--i: #f97316; --j: #ef4444;" onclick="window.location.href='ctf-challenges.html'">
+          <i class="fas fa-briefcase"></i>
+          <span class="nav-label">CTF</span>
+        </div>
+        <div class="nav-item" style="--i: #eab308; --j: #f97316;" onclick="window.location.href='cyber-roadmap.html'">
+          <i class="fas fa-map-signs"></i>
+          <span class="nav-label">Roadmaps</span>
+        </div>
+        <div class="nav-item" style="--i: #8b5cf6; --j: #ec4899;" onclick="openThreatMap()">
+          <i class="fas fa-lightbulb"></i>
+          <span class="nav-label">MAP</span>
+        </div>
+        <div class="nav-item" style="--i: #06b6d4; --j: #3b82f6;" onclick="window.location.href='achievements.html'">
+          <i class="fas fa-trophy"></i>
+          <span class="nav-label">Achievements</span>
+        </div>
+
+        <div class="sidebar-spacer"></div>
+        <div class="nav-sep"></div>
+        <div class="nav-item" style="--i: #64748b; --j: #94a3b8;" onclick="window.location.href='about.html'">
+          <i class="fas fa-circle-info"></i>
+          <span class="nav-label">About Us</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===================== TOP BAR ===================== -->
+    <header class="topbar">
+      <div class="btn magnetic btn-search">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search..." class="search-input">
+        <div class="code-rain"></div>
+        <div class="particles-field">
+          <div class="particle" style="--x: 80px; --y: 40px; animation: particleFloat 3s infinite;"></div>
+          <div class="particle" style="--x: -70px; --y: 30px; animation: particleFloat 4s infinite;"></div>
+          <div class="particle" style="--x: 50px; --y: -80px; animation: particleFloat 5s infinite;"></div>
+          <div class="particle" style="--x: -40px; --y: -50px; animation: particleFloat 3.5s infinite;"></div>
+          <div class="particle" style="--x: 90px; --y: 20px; animation: particleFloat 4.5s infinite;"></div>
+          <div class="particle" style="--x: -60px; --y: -70px; animation: particleFloat 3.2s infinite;"></div>
+        </div>
+      </div>
+      <button class="btn magnetic btn-streaks">
+        <i class="fas fa-fire" style="color: #fb923c;"></i> Streaks
+        <div class="code-rain"></div>
+        <div class="particles-field">
+          <div class="particle" style="--x: 70px; --y: 50px; animation: particleFloat 3.2s infinite;"></div>
+          <div class="particle" style="--x: -50px; --y: 90px; animation: particleFloat 4.2s infinite;"></div>
+          <div class="particle" style="--x: 90px; --y: -40px; animation: particleFloat 5.2s infinite;"></div>
+          <div class="particle" style="--x: -80px; --y: -60px; animation: particleFloat 3.7s infinite;"></div>
+          <div class="particle" style="--x: 40px; --y: 70px; animation: particleFloat 4.7s infinite;"></div>
+          <div class="particle" style="--x: -30px; --y: -40px; animation: particleFloat 3.4s infinite;"></div>
+        </div>
+      </button>
+      <button class="btn magnetic" onclick="logoutCyberSpace()"
+        style="min-width: 100px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </header>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="main">
+
+      <!-- HERO BANNER -->
+      <div class="hero neon-border">
+        <div class="box-content">
+          <div class="corner-tl"></div>
+          <div class="corner-tr"></div>
+          <div class="corner-bl"></div>
+          <div class="corner-br"></div>
+          <div class="hero-text">
+            <h1>NYX NEXUS</h1>
+            <p>The Digital Realm Awaits</p>
+          </div>
+          <div class="hero-icon"><i class="fas fa-user-plus"></i></div>
+        </div>
+        <div class="hero-burst"></div>
+        <div class="hero-lighting"></div>
+        <img src="cyber-gamer-cutout.png" alt="Cyber Gamer" class="hero-char">
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+
+        <!-- Active Labs -->
+        <div class="card active-labs neon-border">
+          <div class="box-content">
+            <div class="card-title">⚡ Active Labs</div>
+
+            <div class="lab-item">
+              <div class="lab-icon red"><i class="fas fa-brain"></i></div>
+              <div class="lab-info">
+                <div class="lab-name">Neural Net Forge</div>
+                <div class="lab-status">
+                  <span class="dot green"></span>
+                  67% &nbsp;—&nbsp; Live
+                  <i class="fas fa-chevron-down" style="font-size:0.6rem;color:var(--text-dim)"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-icon blue"><i class="fas fa-check"></i></div>
+              <div class="lab-info">
+                <div class="lab-name">Nexus Core Lab</div>
+                <div class="lab-status">
+                  <span class="dot green"></span>
+                  81% &nbsp;—&nbsp; Live
+                  <i class="fas fa-chevron-down" style="font-size:0.6rem;color:var(--text-dim)"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-icon gray"><i class="fas fa-shield-halved"></i></div>
+              <div class="lab-info">
+                <div class="lab-name">Quantum Shield</div>
+                <div class="lab-status">
+                  <span class="dot orange pulse"></span>
+                  45% &nbsp;—&nbsp; Training
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Friends Online -->
+        <div class="card friends-box neon-border">
+          <div class="box-content">
+            <div class="friends-header">
+              <div class="card-title" style="margin-bottom:0">Friends Online</div>
+              <span class="view-more"><i class="fas fa-chevron-right"></i></span>
+            </div>
+
+            <div class="friend-item">
+              <div class="friend-avatar fa1">V</div>
+              <div class="friend-info">
+                <div class="friend-name">Vortex</div>
+                <div class="friend-status">in Nova Lab</div>
+              </div>
+              <i class="fas fa-chevron-right friend-arrow"></i>
+            </div>
+
+            <div class="friend-item">
+              <div class="friend-avatar fa2">SB</div>
+              <div class="friend-info">
+                <div class="friend-name">ShadowByte</div>
+                <div class="friend-status">playing Valorant</div>
+              </div>
+              <i class="fas fa-chevron-right friend-arrow"></i>
+            </div>
+
+            <div class="friend-item">
+              <div class="friend-avatar fa3">NG</div>
+              <div class="friend-info">
+                <div class="friend-name">NeonGhost</div>
+                <div class="friend-status">roadmap grinding</div>
+              </div>
+              <i class="fas fa-chevron-right friend-arrow"></i>
+            </div>
+
+            <div class="friend-item">
+              <div class="friend-avatar fa4">QS</div>
+              <div class="friend-info">
+                <div class="friend-name">QuantumSurge</div>
+                <div class="friend-status">in Nexus Core Lab</div>
+              </div>
+              <i class="fas fa-chevron-right friend-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /right-panel -->
+
+      <!-- BOTTOM ROW -->
+      <div class="bottom-row">
+
+        <!-- Performance Analytics -->
+        <!-- Performance Analytics -->
+        <div class="perf-card neon-border">
+          <div class="box-content">
+            <div class="perf-inner">
+              <div class="perf-header">
+                <div class="perf-title">
+                  <div class="perf-icon"><i class="fas fa-heart-pulse"></i></div>
+                  Performance Analytics
+                </div>
+                <div class="life-badge">
+                  <div class="life-icon">&gt;&lt;</div>
+                  <span>Life</span>
+                </div>
+              </div>
+
+              <div class="stats-row">
+                <div class="stat-box">
+                  <div class="stat-label">Total Views</div>
+                  <div class="stat-value">24.5K</div>
+                  <div class="stat-change" style="color: #22c55e;">
+                    <i class="fas fa-arrow-up" style="font-size: 0.6rem;"></i> 12.3%
+                  </div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">Conversions</div>
+                  <div class="stat-value">1.2K</div>
+                  <div class="stat-change" style="color: #f59e0b;">
+                    <i class="fas fa-arrow-up" style="font-size: 0.6rem;"></i> 8.1%
+                  </div>
+                </div>
+              </div>
+
+              <div class="chart-area" style="position:relative; flex: 1;">
+                <div class="bar-chart">
+                  <div class="bar bar-dim" style="height: 12%"></div>
+                  <div class="bar bar-blue" style="height: 25%"></div>
+                  <div class="bar bar-purple" style="height: 40%"></div>
+                  <div class="bar bar-dim" style="height: 30%"></div>
+                  <div class="bar bar-purple" style="height: 45%"></div>
+                  <div class="bar bar-dim" style="height: 25%"></div>
+                  <div class="bar bar-orange" style="height: 65%"></div>
+                  <div class="bar bar-dim" style="height: 25%"></div>
+                  <div class="bar bar-orange" style="height: 45%"></div>
+                  <div class="bar bar-dim" style="height: 25%"></div>
+                  <div class="bar bar-orange" style="height: 35%"></div>
+                  <div class="bar bar-dim" style="height: 28%"></div>
+                  <div class="bar bar-orange" style="height: 55%"></div>
+                </div>
+              </div>
+
+              <div class="perf-footer" style="position: relative; z-index: 5;">
+                <div class="time-select-plain">
+                  Last 7 days <i class="fas fa-chevron-down" style="font-size:0.6rem;"></i>
+                </div>
+                <div class="time-select-red">
+                  Last 7 days <i class="fas fa-chevron-down" style="font-size:0.6rem;"></i>
+                </div>
+              </div>
+            </div>
+
+            <svg class="perf-wave" viewBox="0 0 1000 300" preserveAspectRatio="none">
+              <path d="M-50,200 C150,280 300,50 500,100 C700,150 850,280 1050,150" fill="none"
+                stroke="rgba(168,85,247,0.8)" stroke-width="2" filter="drop-shadow(0 0 8px rgba(168,85,247,0.8))" />
+              <path d="M-50,150 C200,80 400,280 600,180 C800,80 900,250 1050,180" fill="none"
+                stroke="rgba(236,72,153,0.7)" stroke-width="1.5" filter="drop-shadow(0 0 5px rgba(236,72,153,0.6))" />
+              <path d="M-50,250 C100,250 200,100 350,150 C500,200 650,250 750,180 C850,110 950,50 1050,60" fill="none"
+                stroke="url(#perfGrad)" stroke-width="4.5" filter="drop-shadow(0 0 12px rgba(255,102,0,0.9))" />
+              <defs>
+                <linearGradient id="perfGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ff00cc" />
+                  <stop offset="40%" stop-color="#ff6600" />
+                  <stop offset="80%" stop-color="#ffcc00" />
+                  <stop offset="100%" stop-color="#ff6600" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <div class="spark" style="top: 80%; left: 85%; animation-delay: 0s;"></div>
+            <div class="spark" style="top: 40%; left: 60%; animation-delay: 1.2s; width:4px; height:4px;"></div>
+            <div class="spark"
+              style="top: 70%; left: 30%; animation-delay: 2.5s; background: #ff00cc; box-shadow: 0 0 10px #ff00cc;">
+            </div>
+            <div class="spark" style="top: 35%; left: 90%; animation-delay: 3s;"></div>
+            <div class="spark" style="top: 20%; left: 15%; animation-delay: 0.5s; width:2px; height:2px;"></div>
+          </div>
+        </div>
+
+        <!-- XP Trends -->
+        <div class="xp-card neon-border">
+          <div class="box-content">
+            <div class="xp-header">
+              <div class="xp-title">XP Trends</div>
+              <div class="time-select"
+                style="border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.08);color:var(--orange-l)">
+                Last 7 days <i class="fas fa-chevron-down" style="font-size:0.6rem;margin-left:4px"></i>
+              </div>
+            </div>
+            <div class="wave-container">
+              <div class="y-labels">
+                <span>90</span>
+                <span>60</span>
+                <span>30</span>
+                <span>10</span>
+                <span>0</span>
+              </div>
+              <div class="wave-chart-wrap">
+                <svg width="100%" height="160" viewBox="0 0 320 160" preserveAspectRatio="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(249,115,22,0.75)" />
+                      <stop offset="40%" stop-color="rgba(239,68,68,0.45)" />
+                      <stop offset="100%" stop-color="rgba(139,92,246,0.05)" />
+                    </linearGradient>
+                    <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(147, 51, 234, 0.45)" />
+                      <stop offset="100%" stop-color="rgba(147, 51, 234, 0.0)" />
+                    </linearGradient>
+                    <linearGradient id="magentaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(236, 72, 153, 0.45)" />
+                      <stop offset="100%" stop-color="rgba(236, 72, 153, 0.0)" />
+                    </linearGradient>
+                    <linearGradient id="yellowGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(250, 204, 21, 0.45)" />
+                      <stop offset="100%" stop-color="rgba(250, 204, 21, 0.0)" />
+                    </linearGradient>
+                    <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#7c3aed" />
+                      <stop offset="30%" stop-color="#ef4444" />
+                      <stop offset="60%" stop-color="#f97316" />
+                      <stop offset="100%" stop-color="#ef4444" />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="2" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                    <filter id="xpLiquidDistort">
+                      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" seed="2">
+                        <animate attributeName="baseFrequency" dur="5s" values="0.02;0.03;0.02"
+                          repeatCount="indefinite" />
+                      </feTurbulence>
+                      <feDisplacementMap in="SourceGraphic" in2="turb" scale="8" xChannelSelector="R"
+                        yChannelSelector="G" />
+                    </filter>
+                  </defs>
+                  <!-- CORRECT ALIGNMENT TO 1 INCH BASE WITH NEW WAVE SHAPES -->
+                  <g transform="translate(0, 15)">
+                    <!-- Highlight Background over MAY peak -->
+                    <rect x="130" y="0" width="40" height="130" fill="rgba(255,255,255,0.05)" />
+
+                    <!-- Subtle Grid Lines -->
+                    <line x1="0" y1="20" x2="320" y2="20" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                    <line x1="0" y1="50" x2="320" y2="50" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                    <line x1="0" y1="80" x2="320" y2="80" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                    <line x1="0" y1="110" x2="320" y2="110" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+
+                    <line x1="45" y1="0" x2="45" y2="130" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                    <line x1="100" y1="0" x2="100" y2="130" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                    <line x1="160" y1="0" x2="160" y2="130" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                    <line x1="220" y1="0" x2="220" y2="130" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                    <line x1="275" y1="0" x2="275" y2="130" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+
+                    <!-- BG WAVE 1 (Dark Purple) AREA FILL -->
+                    <path
+                      d="M 0 20 C 20 20, 30 75, 50 75 C 70 75, 90 40, 110 40 C 130 40, 170 95, 190 95 C 210 95, 230 20, 260 20 C 280 20, 300 55, 320 55 L 320 130 L 0 130 Z"
+                      fill="url(#purpleGrad)" opacity="0.6" />
+                    <!-- BG WAVE 1 LINE -->
+                    <path
+                      d="M 0 20 C 20 20, 30 75, 50 75 C 70 75, 90 40, 110 40 C 130 40, 170 95, 190 95 C 210 95, 230 20, 260 20 C 280 20, 300 55, 320 55"
+                      fill="none" stroke="rgba(147, 51, 234, 0.7)" stroke-width="2.5"
+                      filter="url(#xpLiquidDistort) url(#glow)" />
+
+                    <!-- BG WAVE 2 (Yellow) AREA FILL -->
+                    <path
+                      d="M 0 45 C 20 40, 30 25, 50 25 C 70 25, 90 40, 100 50 C 120 70, 130 115, 145 115 C 160 115, 170 65, 190 65 C 210 65, 240 80, 260 80 C 290 80, 310 70, 320 60 L 320 130 L 0 130 Z"
+                      fill="url(#yellowGrad)" opacity="0.6" />
+                    <!-- BG WAVE 2 LINE -->
+                    <path
+                      d="M 0 45 C 20 40, 30 25, 50 25 C 70 25, 90 40, 100 50 C 120 70, 130 115, 145 115 C 160 115, 170 65, 190 65 C 210 65, 240 80, 260 80 C 290 80, 310 70, 320 60"
+                      fill="none" stroke="rgba(250, 204, 21, 0.7)" stroke-width="2.5"
+                      filter="url(#xpLiquidDistort) url(#glow)" />
+
+                    <!-- BG WAVE 3 (Magenta) AREA FILL -->
+                    <path
+                      d="M 0 85 C 30 85, 40 90, 60 90 C 80 90, 90 45, 110 35 C 130 25, 140 20, 150 20 C 180 20, 200 60, 240 60 C 260 60, 280 15, 320 15 L 320 130 L 0 130 Z"
+                      fill="url(#magentaGrad)" opacity="0.8" />
+                    <!-- BG WAVE 3 LINE -->
+                    <path
+                      d="M 0 85 C 30 85, 40 90, 60 90 C 80 90, 90 45, 110 35 C 130 25, 140 20, 150 20 C 180 20, 200 60, 240 60 C 260 60, 280 15, 320 15"
+                      fill="none" stroke="rgba(236, 72, 153, 0.9)" stroke-width="3.5"
+                      filter="url(#xpLiquidDistort) url(#glow)" />
+
+                    <!-- EXPLICIT X AXIS LINE BASE -->
+                    <line x1="0" y1="130" x2="320" y2="130" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
+
+                    <!-- Highlight Indicator on Pink Wave -->
+                    <circle cx="150" cy="20" r="10" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)"
+                      stroke-width="1" />
+                    <circle cx="150" cy="20" r="4.5" fill="#ffffff" filter="url(#glow)" />
+                    <text x="150" y="44" fill="#ffffff" font-size="11" font-family="'Rajdhani', sans-serif"
+                      font-weight="700" text-anchor="middle" filter="url(#glow)">+235</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="x-labels">
+              <span>1</span><span>2</span><span>3</span>
+              <span>4</span><span>5</span><span>6</span><span>7</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /bottom-row -->
+
+      <!-- BOTTOM WIDGETS -->
+      <div class="bottom-widgets">
+
+        <!-- LAST DOWNLOADS -->
+        <div class="downloads-section neon-border">
+          <div class="box-content" style="gap: 8px; padding: 16px;">
+            <div class="section-title" style="margin-bottom: 2px;">Recent Room Completions</div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #22c55e, #166534);"><i
+                  class="fas fa-check" style="color:white; font-size:12px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Networking Fundamentals</div>
+                <div class="dl-meta">Status: Completed</div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#a855f7;">+250 XP</div>
+              </div>
+            </div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #22c55e, #166534);"><i
+                  class="fas fa-check" style="color:white; font-size:12px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Packet Analysis Lab</div>
+                <div class="dl-meta">Status: Completed</div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#a855f7;">+300 XP</div>
+              </div>
+            </div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #22c55e, #166534);"><i
+                  class="fas fa-check" style="color:white; font-size:12px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Linux Core Training</div>
+                <div class="dl-meta">Status: Completed</div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#a855f7;">+200 XP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMALL GAME 1 -->
+        <div class="game-card-small neon-border">
+          <div class="box-content" style="gap: 8px; padding: 16px;">
+            <div class="section-title" style="margin-bottom: 2px;">Latest CTF Challenges</div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #f97316, #9a3412);"><i class="fas fa-flag"
+                  style="color:white; font-size:12px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Hidden Packet Flag</div>
+                <div class="dl-meta">Difficulty: <span style="color:#f59e0b;">Medium</span></div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#a855f7;">+150 XP</div>
+              </div>
+            </div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #f97316, #9a3412);"><i class="fas fa-flag"
+                  style="color:white; font-size:12px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Base64 Decoder Hunt</div>
+                <div class="dl-meta">Difficulty: <span style="color:#22c55e;">Easy</span></div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#a855f7;">+100 XP</div>
+              </div>
+            </div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #f97316, #9a3412);"><i class="fas fa-flag"
+                  style="color:white; font-size:12px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Log File Intrusion</div>
+                <div class="dl-meta">Difficulty: <span style="color:#ef4444;">Hard</span></div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#a855f7;">+300 XP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMALL GAME 2 -->
+        <div class="game-card-small neon-border">
+          <div class="box-content" style="gap: 8px; padding: 16px;">
+            <div class="section-title" style="margin-bottom: 2px;">Skill Progress</div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #3b82f6, #1e3a8a);"><i
+                  class="fas fa-network-wired" style="color:white; font-size:10px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Networking Mastery</div>
+                <div class="progress-bar-wrap" style="height: 4px; margin-top: 5px;">
+                  <div class="progress-bar-fill"
+                    style="width: 67%; background: linear-gradient(90deg, #3b82f6, #06b6d4);"></div>
+                </div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#06b6d4;">67%</div>
+              </div>
+            </div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #3b82f6, #1e3a8a);"><i class="fas fa-code"
+                  style="color:white; font-size:10px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Python Security Scripts</div>
+                <div class="progress-bar-wrap" style="height: 4px; margin-top: 5px;">
+                  <div class="progress-bar-fill"
+                    style="width: 42%; background: linear-gradient(90deg, #3b82f6, #06b6d4);"></div>
+                </div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#06b6d4;">42%</div>
+              </div>
+            </div>
+
+            <div class="download-item" style="padding: 6px 12px; margin-bottom: 0;">
+              <div class="dl-icon" style="background: linear-gradient(135deg, #3b82f6, #1e3a8a);"><i
+                  class="fas fa-cloud" style="color:white; font-size:10px;"></i></div>
+              <div class="dl-info">
+                <div class="dl-name">Cloud Security Basics</div>
+                <div class="progress-bar-wrap" style="height: 4px; margin-top: 5px;">
+                  <div class="progress-bar-fill"
+                    style="width: 30%; background: linear-gradient(90deg, #3b82f6, #06b6d4);"></div>
+                </div>
+              </div>
+              <div class="dl-time">
+                <div class="dl-time-val" style="color:#06b6d4;">30%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main><!-- /main -->
+
+    <!-- ===================== RIGHT SIDEBAR ===================== -->
+    <aside class="sidebar-right">
+      <div class="sidebar-right-inner top">
+        <div class="r-avatar r-av1 active">
+          <div class="char-inner"><img src="circle 1.png" alt="Character 1"></div>
+        </div>
+        <div class="r-avatar r-av2">
+          <div class="char-inner"><img src="circle 2.png" alt="Character 2"></div>
+        </div>
+        <div class="r-avatar r-av3">
+          <div class="char-inner"><img src="circle 3.png" alt="Character 3"></div>
+        </div>
+        <div class="r-avatar r-av4">
+          <div class="char-inner"><img src="circle 4.png" alt="Character 4"></div>
+        </div>
+      </div>
+      <div class="sidebar-right-inner bottom">
+        <div class="r-avatar r-av5">
+          <div class="char-inner"><img src="circle 5.png" alt="Character 5"></div>
+        </div>
+        <div class="r-avatar r-av6">
+          <div class="char-inner"><img src="circle 6.png" alt="Character 6"></div>
+        </div>
+        <div class="r-avatar r-av7">
+          <div class="char-inner"><img src="circle 7.png" alt="Character 7"></div>
+        </div>
+        <div class="r-collapse"><i class="fas fa-chevron-right"></i></div>
+      </div>
+    </aside>
+
+  </div><!-- /shell -->
+
+  <!-- ============================================================
+     JAVASCRIPT – stars generator + interactivity
+============================================================ -->
+  <script>
+    /* --- Generate twinkling stars --- */
+    const bg = document.getElementById('starsBg');
+    const starCount = 140;
+    for (let i = 0; i < starCount; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 2.4 + 0.4;
+      s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random() * 100}%;
+      left:${Math.random() * 100}%;
+      --dur:${(Math.random() * 4 + 2).toFixed(1)}s;
+      --del:${(Math.random() * 5).toFixed(1)}s;
+      opacity:${Math.random() * 0.3 + 0.05};
+    `;
+      bg.appendChild(s);
+    }
+
+    /* --- Nav item active state --- */
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    /* --- Right avatar active state --- */
+    document.querySelectorAll('.r-avatar').forEach(av => {
+      av.addEventListener('click', () => {
+        document.querySelectorAll('.r-avatar').forEach(a => a.classList.remove('active'));
+        av.classList.add('active');
+      });
+    });
+
+    /* --- Search bar focus glow --- */
+    const searchInput = document.querySelector('.search-bar input');
+    searchInput.addEventListener('focus', () => {
+      document.querySelector('.search-bar').style.boxShadow = '0 0 20px rgba(139,92,246,0.7), 0 0 40px rgba(139,92,246,0.3)';
+    });
+    searchInput.addEventListener('blur', () => {
+      document.querySelector('.search-bar').style.boxShadow = '';
+    });
+
+    /* --- Animate progress bar --- */
+    let pct = 34;
+    const fill = document.querySelector('.progress-bar-fill');
+    setInterval(() => {
+      pct = Math.min(pct + Math.random() * 0.3, 100);
+      fill.style.width = pct + '%';
+    }, 1000);
+
+    /* --- Subtle card hover particle ripple --- */
+    document.querySelectorAll('.box-content').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(139,92,246,0.07) 0%, transparent 60%), var(--bg-card)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.background = '';
+      });
+    });
+  </script>
+  <script src="cyber-notifications.js"></script>
+  <script src="navigation.js"></script>
+  <script src="mr-nova.js"></script>
+</body>
+
+</html>

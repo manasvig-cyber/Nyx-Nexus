@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture The Flag - Nyx Nexus</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #090e24;
+            --bg-mid: #1e1136;
+            --bg-card: rgba(18, 14, 38, 0.9);
+            --purple: #7c3aed;
+            --purple-l: #a855f7;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6, 182, 212, 0.4);
+            --gold: #ffd700;
+            --gold-glow: rgba(255, 215, 0, 0.5);
+            --text-main: #e2e8f0;
+            --text-sub: #94a3b8;
+            --sidebar-w: 95px;
+            --green: #22c55e;
+            --red: #ef4444;
+            --glow-purple: 0 0 16px rgba(139, 92, 246, 0.55), 0 0 32px rgba(139, 92, 246, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Shell Grid */
+        .shell {
+            display: grid;
+            grid-template-columns: var(--sidebar-w) 1fr;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stars-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0.8;
+                transform: scale(1.3);
+            }
+        }
+
+        /* Sidebar - DASHBOARD VERSION */
+        .sidebar-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent;
+            z-index: 100;
+        }
+
+        .sidebar-inner {
+            background: rgba(18, 14, 34, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.20);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            width: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 12px;
+            margin: 20px 0;
+            height: calc(100% - 40px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow:
+                -1px -1px 0 rgba(79, 70, 229, 0.4),
+                -2px -2px 0 rgba(124, 58, 237, 0.4),
+                -3px -3px 0 rgba(124, 58, 237, 0.3),
+                -4px -4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar-inner:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .sidebar-left .avatar-self {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--purple-l);
+            box-shadow: 0 0 16px rgba(139, 92, 246, 0.60), 0 0 32px rgba(139, 92, 246, 0.3);
+            overflow: hidden;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .sidebar-left .nav-sep {
+            width: 28px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+            margin: 4px 0;
+        }
+
+        .nav-item {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 52px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.5s;
+            margin-bottom: 8px;
+        }
+
+        .nav-item::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .nav-item::after {
+            content: "";
+            position: absolute;
+            top: 5px;
+            width: 100%;
+            height: 100%;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            transition: 0.5s;
+            filter: blur(15px);
+            z-index: -1;
+            opacity: 0;
+        }
+
+        .nav-item:hover {
+            width: 110px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
+            justify-content: center;
+            transform: translateX(29px);
+            z-index: 1000;
+        }
+
+        .nav-item:hover::before {
+            opacity: 1;
+        }
+
+        .nav-item:hover::after {
+            opacity: 0.5;
+        }
+
+        .nav-item i {
+            color: var(--text-sub);
+            font-size: 1.2rem;
+            transition: 0.5s;
+            transition-delay: 0.2s;
+            z-index: 10;
+        }
+
+        .nav-item:hover i {
+            transform: scale(0);
+            color: #fff;
+            transition-delay: 0s;
+        }
+
+        .nav-item .nav-label {
+            position: absolute;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transform: scale(0);
+            transition: 0.5s;
+            transition-delay: 0s;
+            z-index: 10;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .nav-item:hover .nav-label {
+            transform: scale(1);
+            transition-delay: 0.2s;
+        }
+
+        .nav-item.active::before {
+            opacity: 0.4;
+        }
+
+        .nav-item.active::after {
+            opacity: 0.2;
+        }
+
+        .nav-item.active i {
+            color: #fff;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+        }
+
+        /* Emoji Storytelling Animations */
+        .emoji-animation {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0;
+            font-size: 1.6rem;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .challenge-card:hover .emoji-animation {
+            background: rgba(6, 182, 212, 0.08);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+        }
+
+        /* Mission 1: Encryption Cycle */
+        .m1-step {
+            position: absolute;
+            opacity: 0;
+            transition: 0.5s;
+            animation: m1Loop 5s infinite;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+        }
+
+        .m1-step:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .m1-step:nth-child(2) {
+            animation-delay: 1.25s;
+        }
+
+        .m1-step:nth-child(3) {
+            animation-delay: 2.5s;
+        }
+
+        .m1-step:nth-child(4) {
+            animation-delay: 3.75s;
+        }
+
+        @keyframes m1Loop {
+
+            0%,
+            20% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            25%,
+            100% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+
+        /* Mission 2: Packet Travel */
+        .packet-icon {
+            position: absolute;
+            left: 20%;
+            animation: movePacket 3s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            filter: drop-shadow(0 0 8px var(--purple));
+        }
+
+        @keyframes movePacket {
+            0% {
+                left: 25%;
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            10% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            90% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            100% {
+                left: 70%;
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+
+        .server-icon {
+            z-index: 2;
+            position: relative;
+            filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
+        }
+
+        /* Mission 3: Advanced Radar */
+        .radar-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .radar-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #222;
+            transition: 0.3s;
+        }
+
+        .radar-dot.active {
+            animation: radarPulse 5s infinite;
+        }
+
+        .anomaly-text {
+            position: absolute;
+            bottom: 5px;
+            font-size: 0.7rem;
+            font-family: 'Orbitron';
+            color: var(--red);
+            opacity: 0;
+            animation: anomalyFade 5s infinite;
+        }
+
+        @keyframes radarPulse {
+
+            0%,
+            50% {
+                background: #222;
+                box-shadow: none;
+            }
+
+            60%,
+            80% {
+                background: var(--green);
+                box-shadow: 0 0 15px var(--green);
+            }
+        }
+
+        @keyframes anomalyFade {
+
+            0%,
+            65% {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            75%,
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Game Micro Animations */
+        .xp-pop {
+            position: absolute;
+            color: var(--gold);
+            font-weight: 800;
+            font-family: 'Orbitron';
+            pointer-events: none;
+            animation: xpFloat 1.2s forwards;
+            z-index: 1000;
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        @keyframes xpFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.5);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1.2);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-60px) scale(1);
+            }
+        }
+
+        .card-spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkFly 1.2s forwards ease-out;
+            z-index: 50;
+        }
+
+        @keyframes sparkFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        .flag-celebrate {
+            animation: termPulse 1.5s infinite alternate;
+        }
+
+        @keyframes termPulse {
+            from {
+                box-shadow: inset 0 0 15px rgba(34, 197, 94, 0.1);
+            }
+
+            to {
+                box-shadow: inset 0 0 30px rgba(34, 197, 94, 0.4), 0 0 15px rgba(34, 197, 94, 0.2);
+            }
+        }
+
+        .challenge-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.1);
+        }
+
+        /* Mission Indicators */
+        /* Main Content */
+        .main-ctf {
+            display: flex;
+            flex-direction: column;
+            padding: 40px 60px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--cyan) transparent;
+        }
+
+        .main-ctf::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .main-ctf::-webkit-scrollbar-thumb {
+            background: var(--cyan);
+            border-radius: 3px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.06em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 10;
+            /* 8-layer 3D extrusion in Gold */
+            text-shadow:
+                0 0 25px rgba(172, 149, 21, 0.8),
+                0 0 50px rgba(255, 215, 0, 0.4),
+                -0.8px -0.6px 0 #b8860b,
+                -1.6px -1.2px 0 #8d6605,
+                -2.4px -1.8px 0 #b8860b,
+                -3.2px -2.4px 0 #daa520,
+                -4.0px -3.0px 0 #daa520,
+                -4.8px -3.6px 0 #daa520,
+                -5.6px -4.2px 0 #b8860b,
+                -6.4px -4.8px 0 rgba(0, 0, 0, 0.5);
+            transform: translate(6.4px, 4.8px);
+        }
+
+        .page-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            color: #fff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+            font-weight: 600;
+        }
+
+        /* Progress System */
+        .progress-box {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: var(--cyan);
+        }
+
+        .progress-bar-bg {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6);
+            box-shadow: 0 0 15px var(--cyan);
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Challenges Grid */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .challenge-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--cyan);
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.2);
+        }
+
+        .challenge-status {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 1.5rem;
+            color: var(--green);
+            opacity: 0;
+            transition: 0.4s;
+            z-index: 100;
+            filter: drop-shadow(0 0 10px var(--green));
+        }
+
+        .challenge-card.completed .challenge-status {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .challenge-card.completed {
+            border-color: var(--green);
+        }
+
+        .challenge-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .challenge-desc {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text-sub);
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        /* Terminal Component */
+        .terminal-panel {
+            background: #000;
+            border: 1.5px solid rgba(34, 197, 94, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--green);
+            box-shadow: inset 0 0 15px rgba(34, 197, 94, 0.1);
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-line {
+            margin-bottom: 8px;
+            opacity: 0;
+            transform: translateY(5px);
+            overflow-wrap: anywhere;
+            line-height: 1.6;
+            text-align: left;
+            text-shadow: 0 0 5px rgba(34, 197, 94, 0.4);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .terminal-line.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes typeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--green);
+            margin-left: 5px;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+            box-shadow: 0 0 8px var(--green);
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Decoder Tool */
+        .decoder-tool {
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .tool-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--purple-l);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+        }
+
+        .tool-inputs {
+            display: grid;
+            gap: 12px;
+        }
+
+        .tool-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            color: #fff;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            width: 100%;
+        }
+
+        .tool-input:focus {
+            outline: none;
+            border-color: var(--purple-l);
+        }
+
+        .tool-select {
+            background: #1a1a3a;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tool-btn {
+            background: linear-gradient(90deg, #7c3aed, #a855f7);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .tool-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px var(--purple);
+        }
+
+        .decoder-output {
+            margin-top: 12px;
+            padding: 10px;
+            background: #000;
+            border-radius: 6px;
+            color: var(--cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            min-height: 40px;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+
+        /* Flag Submission */
+        .submission-area {
+            margin-top: auto;
+        }
+
+        .flag-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .flag-btn {
+            background: linear-gradient(90deg, #06b6d4, #3b82f6);
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .flag-btn:hover {
+            background: #0891b2;
+            box-shadow: 0 0 15px var(--cyan);
+        }
+
+        /* Hidden Pixel */
+        .hidden-pixel {
+            position: fixed;
+            bottom: 25px;
+            right: 45px;
+            width: 6px;
+            height: 6px;
+            background: var(--cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--cyan);
+            animation: pulseHidden 2s infinite;
+            z-index: 1000;
+            opacity: 0.3;
+        }
+
+        .hidden-pixel:hover {
+            opacity: 1;
+            transform: scale(2);
+        }
+
+        @keyframes pulseHidden {
+
+            0%,
+            100% {
+                opacity: 0.2;
+                box-shadow: 0 0 5px var(--cyan);
+            }
+
+            50% {
+                opacity: 0.6;
+                box-shadow: 0 0 15px var(--cyan);
+            }
+        }
+
+        /* Success Overlay */
+        .completion-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .completion-modal {
+            background: var(--bg-card);
+            border: 2px solid var(--gold);
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 0 50px var(--gold-glow);
+            max-width: 600px;
+            transform: scale(0.8);
+            transition: 0.5s;
+        }
+
+        .completion-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .completion-reward {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            color: var(--cyan);
+            margin-bottom: 30px;
+        }
+
+        .badge-unlock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .badge-icon {
+            font-size: 80px;
+            color: var(--gold);
+            filter: drop-shadow(0 0 20px var(--gold));
+            animation: badgeFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            from {
+                transform: scale(1);
+                filter: drop-shadow(0 0 5px var(--gold));
+            }
+
+            to {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 20px var(--gold));
+            }
+        }
+
+        .return-btn {
+            background: linear-gradient(90deg, #d4af37, #ffd700);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .return-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--gold);
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            background: rgba(20, 20, 40, 0.95);
+            border: 1px solid var(--cyan);
+            border-radius: 12px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10001;
+            transform: translateX(200%);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--cyan-glow);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+            color: var(--cyan);
+        }
+
+        .toast-content h4 {
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+
+        .toast-content p {
+            color: var(--text-sub);
+            font-size: 0.8rem;
+        }
+
+        /* Scanline Animation */
+        .scanline {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(to bottom, transparent, rgba(34, 197, 94, 0.1), transparent);
+            z-index: 5;
+            pointer-events: none;
+            display: none;
+        }
+
+        .scanline.active {
+            display: block;
+            animation: scanMove 2s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        /* Success/Error Card States */
+        .challenge-card.success-glow {
+            border-color: var(--green);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+            animation: successPulse 1.5s infinite alternate;
+        }
+
+        @keyframes successPulse {
+            from {
+                box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+            }
+
+            to {
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+            }
+        }
+
+        .challenge-card.completed::after {
+            content: "✓ MISSION COMPLETED";
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--green);
+            letter-spacing: 2px;
+            font-weight: 900;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        /* Shake Animation */
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        /* Multiple Pixels */
+        .hidden-pixel.fake {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+
+        .hidden-pixel.real {
+            background: var(--cyan);
+            box-shadow: 0 0 15px var(--cyan);
+            animation: pulseHidden 1s infinite;
+        }
+
+        .burst-gold {
+            background: var(--gold) !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars-bg" id="starsBg"></div>
+
+    <!-- Hidden Flag Hunter Pixels -->
+    <div class="hidden-pixel fake" id="pixel1" style="top: 20%; left: 15%;" title="Anomaly Detected"
+        onclick="handlePixel(1)"></div>
+    <div class="hidden-pixel fake" id="pixel2" style="top: 45%; right: 10%;" title="Signal Found"
+        onclick="handlePixel(2)"></div>
+    <div class="hidden-pixel real" id="pixel3" style="bottom: 25px; right: 45px;" title="Real Anomaly"
+        onclick="handlePixel(3)"></div>
+
+    <div class="shell">
+        <!-- Sidebar -->
+        <nav class="sidebar-left">
+            <div class="sidebar-inner">
+                <div class="avatar-self">NN</div>
+                <div class="nav-sep"></div>
+
+                <div class="nav-item" style="--i: #7c3aed; --j: #3b82f6;"
+                    onclick="window.location.href='cyberspace.html'">
+                    <i class="fas fa-house"></i>
+                    <span class="nav-label">Dashboard</span>
+                </div>
+                <div class="nav-item" style="--i: #06b6d4; --j: #22c55e;" onclick="window.location.href='games.html'">
+                    <i class="fas fa-gamepad"></i>
+                    <span class="nav-label">Games</span>
+                </div>
+                <div class="nav-item" style="--i: #ff00cc; --j: #3333ff;"
+                    onclick="window.location.href='learning-path.html'">
+                    <i class="fas fa-route"></i>
+                    <span class="nav-label">Learning Paths</span>
+                </div>
+                <div class="nav-item active" style="--i: #f97316; --j: #ef4444;"
+                    onclick="window.location.href='ctf-challenges.html'">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="nav-label">CTF</span>
+                </div>
+                <div class="nav-item" style="--i: #eab308; --j: #f97316;"
+                    onclick="window.location.href='cyber-roadmap.html'">
+                    <i class="fas fa-map-signs"></i>
+                    <span class="nav-label">Roadmaps</span>
+                </div>
+                <div class="nav-item" style="--i: #8b5cf6; --j: #ec4899;" onclick="openThreatMap()">
+                  <i class="fas fa-lightbulb"></i>
+                  <span class="nav-label">MAP</span>
+                </div>
+                <div class="nav-item" style="--i: #06b6d4; --j: #3b82f6;"
+                    onclick="window.location.href='achievements.html'">
+                    <i class="fas fa-trophy"></i>
+                    <span class="nav-label">Achievements</span>
+                </div>
+
+                <div class="sidebar-spacer"></div>
+                <div class="nav-sep"></div>
+                <div class="nav-item" style="--i: #64748b; --j: #94a3b8;" onclick="window.location.href='about.html'">
+          <i class="fas fa-circle-info"></i>
+          <span class="nav-label">About Us</span>
+        </div>
+            </div>
+        </nav>
+
+        <!-- Main CTF Content -->
+        <main class="main-ctf">
+            <header class="page-header">
+                <h1 class="page-title">CAPTURE THE FLAG</h1>
+                <p class="page-subtitle">Solve cyber puzzles and capture hidden flags</p>
+
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>CTF PROGRESS</span>
+                        <span id="flagCountDisplay">0 / 3 Flags Captured</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="challenges-grid">
+                <!-- Mission 1 -->
+                <article class="challenge-card" id="card1">
+                    <div class="challenge-status"><i class="fas fa-circle-check"></i></div>
+                    <h3 class="challenge-title">Mission 1 — Decode the Hidden Flag</h3>
+                    <p class="challenge-desc">A hacker left an encrypted flag. Decode the message using the decoder
+                        tool.</p>
+
+                    <div class="emoji-animation" title="Encryption Workflow">
+                        <span class="m1-step">📄 Plain Text</span>
+                        <span class="m1-step">🔐 Encoding...</span>
+                        <span class="m1-step">� Encrypted</span>
+                        <span class="m1-step">� Processing</span>
+                    </div>
+
+                    <div class="terminal-panel" id="term1">
+                        <div class="scanline" id="scan1"></div>
+                        <div class="terminal-line">$ encrypted_message</div>
+                        <div class="terminal-line" style="color: var(--cyan);">
+                            NjY2YzYxNjc3YjYzNzk2MjY1NzI1ZjY1Nzg3MDZjNmY3MjY1NzI3ZA==</div>
+                        <div class="terminal-line" style="color: var(--text-sub); margin-top: 10px;">Hint: First decode
+                            using Base64, then decode the result using Hex</div>
+                        <span class="cursor"></span>
+                    </div>
+
+                    <!-- Cyber Decoder Tool -->
+                    <div class="decoder-tool">
+                        <div class="tool-title"><i class="fas fa-microchip"></i> Cyber Decoder Tool</div>
+                        <div class="tool-inputs">
+                            <input type="text" id="decoderInput" class="tool-input" placeholder="Paste encoded text...">
+                            <div style="display: flex; gap: 10px;">
+                                <select id="decoderType" class="tool-select" style="flex: 1;">
+                                    <option value="base64">Base64</option>
+                                    <option value="hex">Hex</option>
+                                    <option value="rot13">ROT13</option>
+                                </select>
+                                <button class="tool-btn" onclick="runDecoder()" style="flex: 1;">Decode</button>
+                            </div>
+                        </div>
+                        <div class="decoder-output" id="decoderOutput">Decoded Output: ...</div>
+                    </div>
+
+                    <div class="submission-area">
+                        <div class="flag-input-group">
+                            <input type="text" id="flagInput1" class="tool-input"
+                                placeholder="Enter Flag (e.g. flag{...})">
+                            <button class="flag-btn" onclick="checkFlag(1, 'flag{cyber_explorer}')">Submit</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Mission 2 -->
+                <article class="challenge-card" id="card2">
+                    <div class="challenge-status"><i class="fas fa-circle-check"></i></div>
+                    <h3 class="challenge-title">Mission 2 — Packet Detective</h3>
+                    <p class="challenge-desc">Analyze a captured network packet and reveal the hidden credential.</p>
+
+                    <div class="emoji-animation" title="Packet Interception">
+                        <span class="server-icon">🖥️</span>
+                        <span class="packet-icon">📦</span>
+                        <span class="server-icon" style="margin-left: 60px;">🖥️</span>
+                    </div>
+
+                    <div class="terminal-panel" id="term2">
+                        <div class="scanline" id="scan2"></div>
+                        <div class="terminal-line">$ packet_capture.log</div>
+                        <div class="terminal-line">SRC: 192.168.1.4</div>
+                        <div class="terminal-line">DST: 192.168.1.10</div>
+                        <div class="terminal-line">PORT: 80</div>
+                        <div class="terminal-line">PROTOCOL: HTTP</div>
+                        <div class="terminal-line" style="margin-top: 5px;">PAYLOAD: <span
+                                style="color: var(--cyan)">Authorization: Basic YWRtaW46cGFzc3dvcmQ=</span></div>
+                        <span class="cursor"></span>
+                    </div>
+
+                    <div class="submission-area">
+                        <p class="challenge-desc" style="font-size: 0.9rem; margin-bottom: 5px;">What is the decoded
+                            credential?</p>
+                        <div class="flag-input-group">
+                            <input type="text" id="flagInput2" class="tool-input" placeholder="Enter Credential">
+                            <button class="flag-btn" onclick="checkFlag(2, 'admin:password')">Submit</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Mission 3 -->
+                <article class="challenge-card" id="card3">
+                    <div class="challenge-status"><i class="fas fa-circle-check"></i></div>
+                    <h3 class="challenge-title">Mission 3 — Hidden Flag Hunt</h3>
+                    <p class="challenge-desc">A secret flag is hidden somewhere on this page. Find the glowing data
+                        pixel and capture it.</p>
+
+                    <div class="emoji-animation" title="Anomaly Scanning">
+                        <span class="satellite">🛰️</span>
+                        <div class="radar-dots">
+                            <div class="radar-dot"></div>
+                            <div class="radar-dot active"></div>
+                            <div class="radar-dot"></div>
+                        </div>
+                        <span class="anomaly-text">🚨 ANOMALY DETECTED</span>
+                    </div>
+
+                    <div class="terminal-panel" id="term3">
+                        <div class="scanline" id="scan3"></div>
+                        <div class="terminal-line">$ system scan initializing...</div>
+                        <div class="terminal-line">scanning ui components...</div>
+                        <div class="terminal-line">undetected anomaly found in background layer.</div>
+                        <div class="terminal-line" style="color: #ffcc00">SEARCH THE INTERFACE FOR THE SOURCE.</div>
+                        <span class="cursor"></span>
+                    </div>
+
+                    <div class="submission-area">
+                        <div class="flag-input-group">
+                            <input type="text" id="flagInput3" class="tool-input" placeholder="Enter Flag" readonly>
+                            <button class="flag-btn" style="opacity: 0.5; cursor: not-allowed;">Submit</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
+    <!-- Completion Modal -->
+    <div class="completion-overlay" id="completionModal">
+        <div class="completion-modal">
+            <i class="fas fa-trophy" style="font-size: 50px; color: var(--gold); margin-bottom: 20px;"></i>
+            <h2 class="completion-title">CTF CONQUERED!</h2>
+            <p class="completion-reward">All mission objectives achieved. +700 XP Accumulated.</p>
+
+            <div class="achievement-unlocked-section"
+                style="padding: 25px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,215,0,0.2); margin-bottom: 30px;">
+                <div
+                    style="color: var(--gold); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 15px; letter-spacing: 2px;">
+                    ACHIEVEMENT UNLOCKED</div>
+                <div class="badge-icon-wrap"
+                    style="font-size: 60px; color: var(--red); margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--red)); animation: badgePulse 2s infinite alternate;">
+                    <i class="fas fa-skull-crossbones"></i>
+                </div>
+                <div style="color: #fff; font-weight: 800; font-size: 22px; font-family: 'Rajdhani';">Cyber Flag Hunter
+                    Badge</div>
+                <div style="color: #94a3b8; font-size: 14px; margin-top: 8px;">Congratulations! You tracked down every
+                    hidden signal.</div>
+            </div>
+
+            <button class="return-btn" onclick="window.location.href='learning-path.html'">RETURN TO SKILL TREE</button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon"><i class="fas fa-shield-halved"></i></div>
+        <div class="toast-content">
+            <h4 id="toastTitle">ACCESS GRANTED</h4>
+            <p id="toastMsg">+200 XP • Flag Captured</p>
+        </div>
+    </div>
+
+    <script>
+        // Stars
+        const bg = document.getElementById('starsBg');
+        for (let i = 0; i < 150; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            const size = Math.random() * 2 + 0.5;
+            s.style.cssText = `
+                width:${size}px; height:${size}px;
+                top:${Math.random() * 100}%;
+                left:${Math.random() * 100}%;
+                --dur:${(Math.random() * 3 + 2)}s;
+                --del:${(Math.random() * 5)}s;
+            `;
+            bg.appendChild(s);
+        }
+
+        // State
+        const completed = new Set();
+        const totalFlags = 3;
+
+        // Base64 helper
+        function decode(str, type) {
+            try {
+                if (type === 'base64') return atob(str);
+                if (type === 'hex') {
+                    let hex = str.toString();
+                    let result = '';
+                    for (let n = 0; n < hex.length; n += 2) {
+                        result += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+                    }
+                    return result;
+                }
+                if (type === 'rot13') {
+                    return str.replace(/[a-zA-Z]/g, function (c) {
+                        return String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+                    });
+                }
+            } catch (e) { return "Error: Invalid Input"; }
+        }
+
+        function runDecoder() {
+            const input = document.getElementById('decoderInput').value;
+            const type = document.getElementById('decoderType').value;
+            const output = document.getElementById('decoderOutput');
+            if (!input) return;
+
+            output.innerText = "> decoding input...";
+
+            // Animation sequence
+            const frames = ["████░░░░░░", "██████░░░░", "██████████"];
+            let f = 0;
+            const anim = setInterval(() => {
+                output.innerText = "> decoding input...\n" + frames[f];
+                f++;
+                if (f >= frames.length) {
+                    clearInterval(anim);
+                    setTimeout(() => {
+                        output.innerText = "Decoded Successfully\nResult: " + decode(input, type);
+                    }, 200);
+                }
+            }, 300);
+        }
+
+        function checkFlag(id, correct) {
+            const input = document.getElementById(`flagInput${id}`);
+            const val = input.value.trim();
+            const card = document.getElementById(`card${id}`);
+            const scan = document.getElementById(`scan${id}`);
+
+            if (id === 1) updateTerminal(1, ["validating flag..."]);
+            if (id === 2) {
+                updateTerminal(2, ["analyzing packet..."]);
+                if (scan) scan.classList.add('active');
+            }
+
+            setTimeout(() => {
+                if (val.toLowerCase() === correct.toLowerCase()) {
+                    if (!completed.has(id)) {
+                        completed.add(id);
+                        card.classList.add('completed', 'success-glow');
+                        input.disabled = true;
+                        if (input.nextElementSibling) input.nextElementSibling.style.display = 'none';
+                        triggerCardSparks(card);
+                        createParticles(card);
+                        showToast("ACCESS GRANTED", "MISSION COMPLETED • +200 XP");
+                        updateProgress();
+
+                        const xpReward = id === 3 ? "+300 XP" : "+200 XP";
+                        if (id === 1) updateTerminal(1, ["validating flag...", "🏁 ✨ FLAG CAPTURED ✨", "ACCESS GRANTED", xpReward]);
+                        if (id === 2) {
+                            updateTerminal(2, ["analyzing packet...", "🏁 ✨ FLAG CAPTURED ✨", "Credential Extracted", "Access Credential Found", xpReward]);
+                            if (scan) scan.classList.remove('active');
+                        }
+                        if (id === 3) {
+                            updateTerminal(3, ["anomaly confirmed", "🏁 ✨ FLAG CAPTURED ✨", "Hidden data extracted", "+300 XP"]);
+                        }
+                    }
+                } else {
+                    input.style.borderColor = 'var(--red)';
+                    input.parentElement.classList.add('shake');
+                    setTimeout(() => {
+                        input.style.borderColor = '';
+                        input.parentElement.classList.remove('shake');
+                    }, 1000);
+
+                    showToast("ACCESS DENIED", "Incorrect solution. Try again.", "red");
+
+                    if (id === 1) updateTerminal(1, ["validating flag...", "ACCESS DENIED", "Incorrect flag. Check decoding bits."]);
+                    if (id === 2) {
+                        updateTerminal(2, ["analyzing packet...", "No valid credential detected", "Check the encoded payload again"]);
+                        if (scan) scan.classList.remove('active');
+                    }
+                }
+            }, 1000);
+        }
+
+        function handlePixel(pixelId) {
+            const pixel = document.getElementById(`pixel${pixelId}`);
+            if (pixel.classList.contains('fake')) {
+                updateTerminal(3, ["scanning anomaly...", "False signal detected", "Continue scanning the interface"]);
+                showToast("FALSE SIGNAL", "This anomaly contains no valid data.", "red");
+                pixel.style.opacity = '0';
+                setTimeout(() => pixel.style.display = 'none', 500);
+            } else if (pixel.classList.contains('real')) {
+                const input = document.getElementById('flagInput3');
+                if (completed.has(3)) return;
+
+                pixel.style.display = 'none';
+                input.value = "flag{hidden_in_space}";
+                triggerCardSparks(pixel);
+                createParticles(pixel, true);
+                showToast("SECRET FLAG FOUND", "The hidden anomaly has been captured!", "gold");
+                checkFlag(3, "flag{hidden_in_space}");
+            }
+        }
+
+        function captureHiddenFlag() {
+            // Deprecated, using handlePixel now
+        }
+
+        function updateProgress() {
+            const count = completed.size;
+            document.getElementById('flagCountDisplay').innerText = `${count} / ${totalFlags} Flags Captured`;
+            document.getElementById('progressBar').style.width = `${(count / totalFlags) * 100}%`;
+
+            if (count === totalFlags) {
+                setTimeout(showFinalScreen, 1500);
+
+                let badges = JSON.parse(localStorage.getItem('cyberSpaceBadges')) || [];
+                if (!badges.includes('cyber-flag-hunter')) {
+                    badges.push('cyber-flag-hunter');
+                    localStorage.setItem('cyberSpaceBadges', JSON.stringify(badges));
+                }
+            }
+        }
+
+        function showFinalScreen() {
+            const overlay = document.getElementById('completionModal');
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                overlay.querySelector('.completion-modal').style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        function showToast(title, msg, color = 'cyan') {
+            const toast = document.getElementById('toast');
+            const colors = {
+                cyan: '#06b6d4',
+                red: '#ef4444',
+                gold: '#ffd700',
+                green: '#22c55e'
+            };
+            toast.style.borderColor = colors[color];
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastTitle').style.color = colors[color];
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function typeWriter(element, text, speed = 30) {
+            return new Promise(resolve => {
+                let i = 0;
+                element.innerText = "> ";
+                element.classList.add('show');
+
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
+        async function updateTerminal(id, lines) {
+            const term = document.getElementById(`term${id}`);
+            const cursor = term.querySelector('.cursor');
+
+            // Clear existing lines except scanline and cursor
+            const currentLines = term.querySelectorAll('.terminal-line');
+            currentLines.forEach(l => l.remove());
+
+            for (let i = 0; i < lines.length; i++) {
+                const div = document.createElement('div');
+                div.className = 'terminal-line';
+                // Success/Error logic
+                const isSuccess = lines[i].includes('GRANTED') || lines[i].includes('extracted') || lines[i].includes('Successfully') || lines[i].includes('confirmed');
+                const isError = lines[i].includes('DENIED') || lines[i].includes('No valid') || lines[i].includes('False') || lines[i].includes('mismatch');
+
+                div.style.color = isSuccess ? 'var(--green)' : (isError ? 'var(--red)' : (i === 0 ? 'var(--green)' : (lines[i].includes('$') ? 'var(--green)' : 'var(--cyan)')));
+                if (isSuccess) div.style.textShadow = '0 0 10px var(--green)';
+                if (isError) div.style.textShadow = '0 0 10px var(--red)';
+
+                div.insertBefore(textSpan, div.firstChild);
+
+                if (isSuccess) div.style.textShadow = '0 0 10px var(--green)';
+                if (isError) div.style.textShadow = '0 0 10px var(--red)';
+
+                term.insertBefore(div, cursor);
+
+                // Trigger XP/Flag effects
+                if (lines[i].includes('XP')) triggerXPPop(div, lines[i].match(/\+\d+/)[0]);
+                if (lines[i].includes('🏁')) term.classList.add('flag-celebrate');
+
+                await typeWriter(div, lines[i], 30);
+                await new Promise(r => setTimeout(r, 300)); // Delay between lines
+            }
+            setTimeout(() => term.classList.remove('flag-celebrate'), 3000);
+        }
+
+        function triggerXPPop(element, amount) {
+            const pop = document.createElement('div');
+            pop.className = 'xp-pop';
+            pop.innerText = `✨ ${amount} XP ✨`;
+            document.body.appendChild(pop);
+
+            const rect = element.getBoundingClientRect();
+            pop.style.left = (rect.left + rect.width / 2) + 'px';
+            pop.style.top = rect.top + 'px';
+
+            setTimeout(() => pop.remove(), 1200);
+        }
+
+        function triggerCardSparks(card) {
+            const rect = card.getBoundingClientRect();
+            for (let i = 0; i < 15; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'card-spark';
+                const side = Math.floor(Math.random() * 4);
+                let x, y;
+                if (side === 0) { x = Math.random() * rect.width; y = 0; }
+                else if (side === 1) { x = rect.width; y = Math.random() * rect.height; }
+                else if (side === 2) { x = Math.random() * rect.width; y = rect.height; }
+                else { x = 0; y = Math.random() * rect.height; }
+
+                spark.style.left = (rect.left + x) + 'px';
+                spark.style.top = (rect.top + y) + 'px';
+                spark.style.setProperty('--tx', (Math.random() - 0.5) * 50 + 'px');
+                spark.style.setProperty('--ty', (Math.random() - 1) * 80 + 'px');
+
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 1200);
+            }
+        }
+
+        function createParticles(element, isGold = false) {
+            const rect = element.getBoundingClientRect();
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'burst' + (isGold ? ' burst-gold' : '');
+                document.body.appendChild(p);
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 50 + Math.random() * 100;
+                const tx = Math.cos(angle) * dist;
+                const ty = Math.sin(angle) * dist;
+
+                p.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                ], { duration: 1000, easing: 'ease-out' }).onfinish = () => p.remove();
+            }
+        }
+
+        // Initial Load Typing Animation
+        async function initTerminals() {
+            const terminals = document.querySelectorAll('.terminal-panel');
+            for (const term of terminals) {
+                const linesSelector = term.querySelectorAll('.terminal-line');
+                const originalTexts = Array.from(linesSelector).map(l => ({
+                    text: l.innerText.trim(),
+                    color: l.style.color
+                }));
+                const scan = term.querySelector('.scanline');
+                const cursor = term.querySelector('.cursor') || document.createElement('span');
+                if (!cursor.classList.contains('cursor')) cursor.className = 'cursor';
+
+                term.innerHTML = '';
+                if (scan) term.appendChild(scan);
+                term.appendChild(cursor);
+
+                for (let i = 0; i < originalTexts.length; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'terminal-line';
+                    div.style.color = originalTexts[i].color || 'var(--green)';
+                    term.insertBefore(div, cursor);
+                    await typeWriter(div, originalTexts[i].text, 30);
+                    await new Promise(r => setTimeout(r, 300));
+                }
+            }
+        }
+
+        window.addEventListener('load', initTerminals);
+    </script>
+    <script src="navigation.js"></script>
+    <script src="mr-nova.js"></script>
+</body>
+
+</html>
