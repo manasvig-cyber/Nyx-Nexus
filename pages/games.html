@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Arena – Nyx Nexus</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ============================================================
+     GLOBAL RESET & BASE (Same as cyberspace.html)
+  ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #090e24;
+            --bg-mid: #1e1136;
+            --bg-card: rgba(22, 16, 44, 0.85);
+            --purple: #7c3aed;
+            --purple-l: #a855f7;
+            --blue: #3b82f6;
+            --blue-l: #60a5fa;
+            --orange: #f97316;
+            --orange-l: #fb923c;
+            --pink: #ec4899;
+            --cyan: #06b6d4;
+            --green: #22c55e;
+            --red: #ef4444;
+            --text-main: #e2e8f0;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --sidebar-w: 95px;
+            --right-w: 85px;
+            --topbar-h: 80px;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: url('../assets/images/background.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: cover;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ============================================================
+     BACKGROUND ANIMATIONS (Same as cyberspace.html)
+  ============================================================ */
+        .stars-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            animation: twinkle var(--dur, 3s) var(--del, 0s) infinite alternate ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: .1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: .8;
+                transform: scale(1.4);
+            }
+        }
+
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 140px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), transparent);
+            opacity: 0.25;
+            animation: shoot 6s infinite ease-in;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(-10vw) translateY(0) rotate(25deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(120vw) translateY(60vh) rotate(25deg);
+                opacity: 0;
+            }
+        }
+
+        .ambient-orb {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            animation: orbScreen 15s infinite;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        @keyframes orbScreen {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.3;
+                transform: scale(2);
+            }
+        }
+
+        /* ============================================================
+     LAYOUT (Modified for Games Arena)
+  ============================================================ */
+        .shell {
+            display: grid;
+            grid-template-columns: var(--sidebar-w) 1fr;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sidebar Styles (Copy from dashboard) */
+        .sidebar-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+            z-index: 100;
+            padding: 0;
+        }
+
+        .sidebar-inner {
+            background: rgba(18, 14, 34, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.20);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            width: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 12px;
+            margin: 20px 0;
+            height: calc(100% - 40px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* 3D Sidebar Slab */
+            box-shadow:
+                -1px -1px 0 rgba(79, 70, 229, 0.4),
+                -2px -2px 0 rgba(124, 58, 237, 0.4),
+                -3px -3px 0 rgba(124, 58, 237, 0.3),
+                -4px -4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar-inner:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .sidebar-left .avatar-self {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--purple-l);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+            overflow: hidden;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .sidebar-left .nav-sep {
+            width: 28px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+            margin: 4px 0;
+        }
+
+        .nav-item {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 52px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.5s;
+            margin-bottom: 8px;
+        }
+
+        .nav-item::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .nav-item::after {
+            content: "";
+            position: absolute;
+            top: 5px;
+            width: 100%;
+            height: 100%;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            transition: 0.5s;
+            filter: blur(15px);
+            z-index: -1;
+            opacity: 0;
+        }
+
+        .nav-item:hover {
+            width: 110px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
+            justify-content: center;
+            transform: translateX(29px);
+            z-index: 1000;
+        }
+
+        .nav-item:hover::before {
+            opacity: 1;
+        }
+
+        .nav-item:hover::after {
+            opacity: 0.5;
+        }
+
+        .nav-item i {
+            color: var(--text-sub);
+            font-size: 1.2rem;
+            transition: 0.5s;
+            transition-delay: 0.2s;
+            z-index: 10;
+            animation: iconFloat 4s infinite ease-in-out;
+        }
+
+        @keyframes iconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .nav-item:hover i {
+            transform: scale(0);
+            color: #fff;
+            transition-delay: 0s;
+            animation: none;
+        }
+
+        .nav-item .nav-label {
+            position: absolute;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transform: scale(0);
+            transition: 0.5s;
+            transition-delay: 0s;
+            z-index: 10;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .nav-item:hover .nav-label {
+            transform: scale(1);
+            transition-delay: 0.2s;
+        }
+
+        .nav-item.active::before {
+            opacity: 0.4;
+        }
+
+        .nav-item.active::after {
+            opacity: 0.2;
+        }
+
+        .nav-item.active i {
+            color: #fff;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+        }
+
+        /* ============================================================
+     MAIN ARENA CONTENT
+  ============================================================ */
+        .main {
+            padding: 20px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .arena-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .arena-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.06em;
+            line-height: 1.1;
+            position: relative;
+            z-index: 10;
+            /* 8-layer 3D extrusion in Gold */
+            text-shadow:
+                0 0 25px rgba(172, 149, 21, 0.8),
+                0 0 50px rgba(255, 215, 0, 0.4),
+                -0.8px -0.6px 0 #b8860b,
+                -1.6px -1.2px 0 #8d6605,
+                -2.4px -1.8px 0 #b8860b,
+                -3.2px -2.4px 0 #daa520,
+                -4.0px -3.0px 0 #daa520,
+                -4.8px -3.6px 0 #daa520,
+                -5.6px -4.2px 0 #b8860b,
+                -6.4px -4.8px 0 rgba(0, 0, 0, 0.5);
+            transform: translate(6.4px, 4.8px);
+        }
+
+        .arena-filters {
+            display: flex;
+            gap: 12px;
+            padding: 5px;
+            background: rgba(18, 14, 34, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn {
+            padding: 6px 18px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: transparent;
+            color: #94a3b8;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--blue-l);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .xp-rewards-top {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+
+        .xp-badge-top {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            color: #000;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .xp-badge-top::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--fill-color, #fff);
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+            border-radius: 6px;
+        }
+
+        .xp-badge-top:hover::before {
+            transform: scaleX(1);
+        }
+
+        .xp-badge-top:hover {
+            box-shadow: 0 8px 25px var(--fill-color, #fff), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            border-color: var(--fill-color, #fff);
+        }
+
+        .xp-badge-top i,
+        .xp-badge-top span {
+            color: #000 !important;
+            transition: color 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .xp-badge-top:hover i,
+        .xp-badge-top:hover span {
+            color: #fff !important;
+        }
+
+        /* Game Cards Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            flex: 1;
+            padding-bottom: 40px;
+            /* More space at bottom */
+        }
+
+        /* Electric Border Root Variables */
+        :root {
+            --electric-border-color: #ffd700;
+            --electric-light-color: #fff7ad;
+            --gradient-color: rgba(255, 215, 0, 0.2);
+            --color-neutral-900: #06060e;
+        }
+
+        /* Character specific play button fill colors */
+        .card-zeus {
+            --electric-border-color: #3b82f6;
+            --electric-light-color: #60a5fa;
+        }
+
+        .card-selene {
+            --electric-border-color: #d97706;
+            --electric-light-color: #fbbf24;
+        }
+
+        .card-athena {
+            --electric-border-color: #16a34a;
+            --electric-light-color: #4ade80;
+        }
+
+        .card-atlas {
+            --electric-border-color: #1d4ed8;
+            --electric-light-color: #60a5fa;
+        }
+
+        .card-calliope {
+            --electric-border-color: #ef4444;
+            --electric-light-color: #f87171;
+        }
+
+        .card-zephyre {
+            --electric-border-color: #0ea5e9;
+            --electric-light-color: #38bdf8;
+        }
+
+        .game-card {
+            position: relative;
+            border-radius: 18px;
+            padding: 5px;
+            background: linear-gradient(135deg, #1e3a8a, #5b2d18, #7c3aed, #ff00cc);
+            z-index: 1;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* 3D Top-Left Slab - Dark Purple & Brown Gradient */
+            box-shadow:
+                -1px -1px 0 #3b0764,
+                -2px -2px 0 #451a03,
+                -3px -3px 0 #78350f,
+                -4px -4px 15px rgba(0, 0, 0, 0.5);
+            /* Layout specific */
+            aspect-ratio: 0.28;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .game-card:hover {
+            box-shadow:
+                -2px -2px 0 #581c87,
+                -4px -4px 0 #92400e,
+                -6px -6px 25px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(124, 58, 237, 0.4);
+            transform: scale(1.06) translateY(-6px);
+            z-index: 20;
+        }
+
+        .game-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            background:
+                linear-gradient(105deg,
+                    transparent 10%,
+                    rgba(218, 165, 32, 0.75) 18%,
+                    rgba(255, 235, 120, 1) 25%,
+                    rgba(218, 165, 32, 0.75) 32%,
+                    transparent 50%),
+                linear-gradient(285deg,
+                    transparent 10%,
+                    rgba(218, 165, 32, 0.75) 18%,
+                    rgba(255, 235, 120, 1) 22%,
+                    rgba(218, 165, 32, 0.75) 26%,
+                    transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .card-inner {
+            position: absolute;
+            inset: 5px;
+            /* Thicker dashboard-style border */
+            background: #090e24;
+            border-radius: 9px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            /* Move button/XP to the top */
+            z-index: 2;
+        }
+
+        .card-inner::after {
+            display: none;
+        }
+
+        .char-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            /* Heads at top, names at bottom */
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+
+        /* Shift first 4 images up to bring the bottom words into view and align with the rest */
+        .card-zeus .char-img,
+        .card-selene .char-img,
+        .card-athena .char-img,
+        .card-atlas .char-img {
+            object-position: center 12%;
+        }
+
+        .card-calliope .char-img,
+        .card-zephyre .char-img {
+            object-position: top center;
+        }
+
+        .game-card:hover .char-img {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        /* Removed individual character glows as requested */
+        .card-zephyre .card-inner::before,
+        .card-calliope .card-inner::before,
+        .card-atlas .card-inner::before,
+        .card-athena .card-inner::before,
+        .card-zeus .card-inner::before,
+        .card-selene .card-inner::before {
+            display: none;
+        }
+
+        .game-info {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 0 15px;
+        }
+
+        .card-title-group {
+            display: none !important;
+        }
+
+
+
+        /* SPARKLE BUTTON SYSTEM */
+        :root {
+            --transition: 0.25s;
+            --spark: 1.8s;
+        }
+
+        .card-xp {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: transparent !important;
+            font-size: 0.85rem;
+            font-weight: 800;
+            border: 0 !important;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--electric-border-color);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 0;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            pointer-events: none;
+        }
+
+        .card-xp .text {
+            background: none !important;
+            -webkit-text-fill-color: var(--electric-border-color) !important;
+            font-size: 0.85rem !important;
+        }
+
+        .card-xp i {
+            font-size: 0.9rem;
+            color: var(--electric-border-color);
+        }
+
+        .card-xp .spark,
+        .card-xp .backdrop,
+        .card-xp::before,
+        .card-xp::after,
+        .card-xp~.particle-pen {
+            display: none !important;
+        }
+
+        .play-btn:hover,
+        .card-xp:hover {
+            --active: 1;
+        }
+
+        .play-btn {
+            padding: 10px 30px !important;
+            min-width: 140px;
+            margin-bottom: 5px;
+            /* Glass style */
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+            color: #000;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .play-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--electric-border-color);
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+            border-radius: 100px;
+        }
+
+        .play-btn:hover::before {
+            transform: scaleX(1);
+        }
+
+        .play-btn:hover {
+            box-shadow: 0 8px 25px var(--electric-light-color), inset 0 0 10px rgba(255, 255, 255, 0.2) !important;
+            border-color: var(--electric-border-color) !important;
+            transform: translateY(-2px);
+        }
+
+        .play-btn .spark,
+        .play-btn .backdrop {
+            display: none !important;
+        }
+
+        .play-btn .text {
+            background: none !important;
+            color: #000 !important;
+            -webkit-text-fill-color: #000 !important;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover .text {
+            color: #fff !important;
+            -webkit-text-fill-color: #fff !important;
+        }
+
+        .play-btn svg.sparkle path {
+            color: #000 !important;
+            transition: color 0.3s ease;
+        }
+
+        .play-btn:hover svg.sparkle path {
+            color: #fff !important;
+        }
+
+        /* Sparkle SVG styles */
+        .sparkle path {
+            color: hsl(0 0% calc((var(--active, 0) * 70%) + var(--base)));
+            transform-box: fill-box;
+            transform-origin: center;
+            fill: currentColor;
+            stroke: currentColor;
+            animation-delay: calc((var(--transition) * 1.5) + (var(--delay) * 1s));
+            animation-duration: 0.6s;
+            transition: color var(--transition);
+        }
+
+        .play-btn:hover path,
+        .card-xp:hover path {
+            animation-name: bounce;
+        }
+
+        @keyframes bounce {
+
+            35%,
+            65% {
+                scale: var(--scale);
+            }
+        }
+
+        .sparkle path:nth-of-type(1) {
+            --scale: 0.5;
+            --delay: 0.1;
+            --base: 40%;
+        }
+
+        .sparkle path:nth-of-type(2) {
+            --scale: 1.5;
+            --delay: 0.2;
+            --base: 20%;
+        }
+
+        .sparkle path:nth-of-type(3) {
+            --scale: 2.5;
+            --delay: 0.35;
+            --base: 30%;
+        }
+
+        .spark {
+            position: absolute;
+            inset: 0;
+            border-radius: 100px;
+            rotate: 0deg;
+            overflow: hidden;
+            mask: linear-gradient(white, transparent 50%);
+            -webkit-mask: linear-gradient(white, transparent 50%);
+            animation: flip calc(var(--spark) * 2) infinite steps(2, end);
+        }
+
+        @keyframes flip {
+            to {
+                rotate: 360deg;
+            }
+        }
+
+        .spark:before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            aspect-ratio: 1;
+            top: 0%;
+            left: 50%;
+            z-index: -1;
+            translate: -50% -15%;
+            rotate: 0;
+            transform: rotate(-90deg);
+            opacity: calc((var(--active)) + 0.4);
+            background: conic-gradient(from 0deg, transparent 0 340deg, white 360deg);
+            transition: opacity var(--transition);
+            animation: rotate-spark var(--spark) linear infinite both;
+        }
+
+        @keyframes rotate-spark {
+            to {
+                transform: rotate(90deg);
+            }
+        }
+
+        .backdrop {
+            position: absolute;
+            inset: var(--cut);
+            background: var(--bg);
+            border-radius: 100px;
+            transition: background var(--transition);
+        }
+
+        .sparkle-button {
+            position: relative;
+            display: flex;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .particle-pen {
+            position: absolute;
+            width: 150%;
+            aspect-ratio: 1;
+            top: 50%;
+            left: 50%;
+            translate: -50% -50%;
+            mask: radial-gradient(white, transparent 65%);
+            -webkit-mask: radial-gradient(white, transparent 65%);
+            z-index: -1;
+            opacity: var(--active, 0);
+            transition: opacity var(--transition);
+            pointer-events: none;
+        }
+
+        .particle {
+            fill: white;
+            width: 0.2rem;
+            aspect-ratio: 1;
+            position: absolute;
+            animation: float-out 1s infinite linear;
+            animation-play-state: paused;
+        }
+
+        .play-btn:hover~.particle-pen,
+        .card-xp:hover~.particle-pen {
+            --active: 1;
+        }
+
+        .play-btn:hover~.particle-pen .particle,
+        .card-xp:hover~.particle-pen .particle {
+            animation-play-state: running;
+        }
+
+        @keyframes float-out {
+            to {
+                rotate: 360deg;
+            }
+        }
+
+        .text {
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(90deg, hsl(0 0% calc((var(--active) * 100%) + 65%)), hsl(0 0% calc((var(--active) * 100%) + 26%)));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: background var(--transition);
+        }
+
+        .play-btn svg.sparkle,
+        .card-xp svg.sparkle {
+            width: 1.25em;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Removed legacy button overrides */
+
+        /* Remove individual glow as it's now in card-inner */
+        .card-zephyre::before,
+        .card-calliope::before,
+        .card-atlas::before,
+        .card-athena::before,
+        .card-zeus::before,
+        .card-selene::before {
+            display: none;
+        }
+
+        .game-card:hover::before {
+            opacity: 0.6;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.05;
+            background-image: linear-gradient(rgba(139, 92, 246, 1) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--purple-l);
+            border-radius: 10px;
+        }
+
+        /* Character Skill Bars Overlay */
+        .skill-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 8, 35, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            padding: 20px 15px;
+            box-sizing: border-box;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.35s ease-out;
+            z-index: 10;
+        }
+
+        .skill-panel::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #7a3cff, #00c8ff, #ff3df2);
+            box-shadow: 0 0 12px rgba(122, 60, 255, 0.6), 0 0 25px rgba(0, 200, 255, 0.4);
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+
+        .game-card:hover .skill-panel {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .game-card:hover .sparkle-button {
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+
+        .panel-xp {
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: #00eaff;
+            text-shadow: 0 0 8px rgba(0, 234, 255, 0.8);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .panel-xp i {
+            margin-right: 5px;
+        }
+
+        .skill-row {
+            margin-bottom: 10px;
+        }
+
+        .skill-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .skill-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+            color: #c9d1ff;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skill-bar-track {
+            height: 6px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-bar-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #00eaff, #7a3cff);
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0, 234, 255, 0.7);
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s;
+        }
+
+        .game-card:hover .skill-bar-fill {
+            width: var(--fill);
+        }
+
+        .cyber-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 234, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 234, 255, 0.5);
+            animation: scan 3s linear infinite;
+            z-index: 11;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .game-card:hover .cyber-scanline {
+            opacity: 1;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+                opacity: 1;
+            }
+
+            50% {
+                top: 100%;
+                opacity: 0.5;
+            }
+
+            100% {
+                top: 0;
+                opacity: 1;
+            }
+        }
+
+        /* Athena Loading Overlay */
+        .athena-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 4, 12, 0.98);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+        }
+
+        .athena-loading-text {
+            color: var(--cyan);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+            min-width: 400px;
+        }
+
+        .loading-line {
+            opacity: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .loading-line.show {
+            opacity: 1;
+            animation: typingLine 0.4s ease-out forwards;
+        }
+
+        @keyframes typingLine {
+            from {
+                transform: translateX(-15px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: var(--cyan);
+            margin-left: 10px;
+            animation: blink 0.8s infinite;
+            box-shadow: 0 0 10px var(--cyan);
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Zeus Terminal Launcher - Blue Cyan Redesign */
+        .zeus-terminal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 5, 10, 0.96);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(12px);
+        }
+
+        .terminal-window {
+            width: 800px;
+            max-width: 90%;
+            background: #02050a;
+            border-radius: 12px;
+            padding: 2px; /* For the gradient border */
+            background-image: linear-gradient(135deg, #00f7ff, #0066ff);
+            box-shadow: 0 0 40px rgba(0, 102, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .terminal-inner {
+            background: #02050a;
+            border-radius: 10px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Cyber Grid Background */
+        .terminal-inner::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 247, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 247, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        .terminal-header {
+            background: rgba(10, 20, 40, 0.8);
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-title {
+            color: #00f7ff;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+        }
+
+        .terminal-body {
+            padding: 30px;
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            color: #00f7ff;
+            line-height: 1.6;
+            min-height: 350px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .terminal-msg {
+            margin-bottom: 12px;
+            display: block;
+            text-shadow: 0 0 5px rgba(0, 247, 255, 0.3);
+        }
+
+        .terminal-command {
+            color: #fff;
+            background: rgba(0, 247, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 4px;
+            border-left: 3px solid #00f7ff;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .terminal-footer {
+            padding: 25px;
+            border-top: 1px solid rgba(0, 247, 255, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            background: rgba(5, 10, 20, 0.9);
+        }
+
+        .term-btn {
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #00f7ff, #0066ff);
+            color: #fff;
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-run:hover {
+            box-shadow: 0 0 25px rgba(0, 247, 255, 0.6);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .btn-close {
+            background: transparent;
+            color: #00f7ff;
+            border: 1px solid #00f7ff;
+        }
+
+        .btn-close:hover {
+            background: rgba(0, 247, 255, 0.1);
+            box-shadow: inset 0 0 10px rgba(0, 247, 255, 0.2);
+        }
+
+        .type-cursor::after {
+            content: "_";
+            animation: blink 1s step-end infinite;
+        }
+
+        /* Crisis Alert Style - Subtle Cyber Fire Upgrade */
+        #crisis-alert {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.96);
+            z-index: 10002;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(12px);
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Spark Particles Container */
+        .emergency-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #ff6a00;
+            border-radius: 50%;
+            filter: blur(1px);
+            box-shadow: 0 0 8px #ff3c00;
+            opacity: 0;
+            animation: sparkFloat 3s infinite linear;
+        }
+
+        @keyframes sparkFloat {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            30% { opacity: 0.8; }
+            100% { transform: translateY(-100px) translateX(calc(100px - var(--rand-x, 50px))); opacity: 0; }
+        }
+
+        .alert-box {
+            position: relative;
+            padding: 50px;
+            border-radius: 12px;
+            background: rgba(10, 0, 0, 0.9);
+            color: #ff3c00;
+            max-width: 700px;
+            z-index: 10;
+            border: 1px solid rgba(255, 60, 0, 0.4);
+            box-shadow: 
+                0 0 15px rgba(255, 80, 0, 0.3),
+                0 0 30px rgba(255, 60, 0, 0.15),
+                inset 0 0 15px rgba(255, 60, 0, 0.1);
+            
+            animation: alertFadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                       alertPulse 3s infinite ease-in-out;
+        }
+
+        /* Subtle Inner Glow */
+        .alert-box::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background: radial-gradient(circle at center, rgba(255, 60, 0, 0.05), transparent 80%);
+            pointer-events: none;
+        }
+
+        .alert-box h2 {
+            font-size: 2.6rem;
+            margin-bottom: 25px;
+            letter-spacing: 4px;
+            color: #ff3c00;
+            text-shadow: 
+                0 0 8px #ff3c00,
+                0 0 16px #ff6a00;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .alert-box p {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.35rem;
+            margin: 15px 0;
+            letter-spacing: 1.5px;
+            color: #ffa500;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.5s ease-out;
+            font-weight: 700;
+        }
+
+        .alert-box p.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { 
+                border-color: rgba(255, 60, 0, 0.4);
+                box-shadow: 0 0 15px rgba(255, 80, 0, 0.3), 0 0 30px rgba(255, 60, 0, 0.15);
+            }
+            50% { 
+                border-color: rgba(255, 60, 0, 0.7);
+                box-shadow: 0 0 25px rgba(255, 80, 0, 0.5), 0 0 45px rgba(255, 60, 0, 0.3);
+            }
+        }
+
+        @keyframes alertFadeIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Atlas Defense Shield Style */
+        #atlas-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 119, 255, 0.15), rgba(2, 5, 12, 0.98));
+            z-index: 10003;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+            font-family: 'Orbitron', sans-serif;
+            overflow: hidden;
+        }
+
+        .shield-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .defense-shield {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 207, 255, 0.5);
+            background: radial-gradient(circle at center, rgba(0, 207, 255, 0.1), transparent 70%);
+            box-shadow: 0 0 50px rgba(0, 119, 255, 0.4), inset 0 0 30px rgba(0, 207, 255, 0.2);
+            animation: shieldPulse 2s infinite ease-in-out;
+        }
+
+        .shield-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px solid #00eaff;
+            opacity: 0;
+            animation: ringExpand 1.5s ease-out forwards;
+        }
+
+        .defense-text {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: #00eaff;
+            text-shadow: 0 0 15px rgba(0, 234, 255, 0.8);
+        }
+
+        .defense-text h2 {
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+            letter-spacing: 5px;
+            font-weight: 900;
+        }
+
+        .defense-text p {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 2px;
+            font-weight: 600;
+            opacity: 0;
+            animation: textFadeIn 0.4s forwards;
+        }
+
+        @keyframes shieldPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(0, 119, 255, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 80px rgba(0, 119, 255, 0.6); }
+        }
+
+        @keyframes ringExpand {
+            0% { transform: scale(0.5); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes textFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .defense-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .def-spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00cfff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00eaff;
+            animation: defSparkMove 1.5s infinite linear;
+        }
+
+        @keyframes defSparkMove {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/cyber-notifications.css">
+</head>
+
+<body>
+    <div class="stars-bg" id="starsBg"></div>
+    <div class="bg-animation">
+        <div class="shooting-star" style="top: 15%; animation-delay: 0s;"></div>
+        <div class="shooting-star" style="top: 45%; animation-delay: 2s;"></div>
+        <div class="shooting-star" style="top: 75%; animation-delay: 4.5s;"></div>
+    </div>
+    <div class="bg-animation">
+        <div class="ambient-orb"
+            style="top: 10%; left: 20%; background: radial-gradient(circle, var(--purple) 0%, transparent 70%);"></div>
+        <div class="ambient-orb"
+            style="top: 60%; left: 80%; background: radial-gradient(circle, var(--blue) 0%, transparent 70%); animation-delay: 2s;">
+        </div>
+    </div>
+    <div class="grid-overlay"></div>
+
+    <div class="shell">
+        <!-- LEFT SIDEBAR -->
+        <nav class="sidebar-left">
+            <div class="sidebar-inner">
+                <div class="avatar-self">NN</div>
+                <div class="nav-sep"></div>
+
+                <div class="nav-item" style="--i: #7c3aed; --j: #3b82f6;"
+                    onclick="window.location.href='cyberspace.html'">
+                    <i class="fas fa-house"></i>
+                    <span class="nav-label">Dashboard</span>
+                </div>
+                <div class="nav-item active" style="--i: #06b6d4; --j: #22c55e;">
+                    <i class="fas fa-gamepad"></i>
+                    <span class="nav-label">Games</span>
+                </div>
+                <div class="nav-item" style="--i: #ff00cc; --j: #3333ff;"
+                    onclick="window.location.href='learning-path.html'">
+                    <i class="fas fa-route"></i>
+                    <span class="nav-label">Learning Paths</span>
+                </div>
+                <div class="nav-item" style="--i: #f97316; --j: #ef4444;"
+                    onclick="window.location.href='ctf-challenges.html'">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="nav-label">CTF</span>
+                </div>
+                <div class="nav-item" style="--i: #eab308; --j: #f97316;"
+                    onclick="window.location.href='cyber-roadmap.html'">
+                    <i class="fas fa-map-signs"></i>
+                    <span class="nav-label">Roadmaps</span>
+                </div>
+                <div class="nav-item" style="--i: #8b5cf6; --j: #ec4899;" onclick="openThreatMap()">
+                  <i class="fas fa-lightbulb"></i>
+                  <span class="nav-label">MAP</span>
+                </div>
+                <div class="nav-item" style="--i: #06b6d4; --j: #3b82f6;"
+                    onclick="window.location.href='achievements.html'">
+                    <i class="fas fa-trophy"></i>
+                    <span class="nav-label">Achievements</span>
+                </div>
+
+                <div class="sidebar-spacer"></div>
+                <div class="nav-sep"></div>
+                <div class="nav-item" style="--i: #64748b; --j: #94a3b8;" onclick="window.location.href='about.html'">
+                    <i class="fas fa-circle-info"></i>
+                    <span class="nav-label">About Us</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main">
+            <div class="arena-header">
+                <h1 class="arena-title">GAMES ARENA</h1>
+                <div class="xp-rewards-top">
+                    <span style="letter-spacing: 2px;">XP REWARDS</span>
+                    <div class="xp-badge-top" style="--fill-color: #3b82f6;">
+                        <i class="fas fa-shield-halved xp-val"></i> <span class="+225 XP">+225 XP</span>
+                    </div>
+                    <div class="xp-badge-top" style="--fill-color: var(--cyan);">
+                        <i class="fas fa-bolt xp-val"></i> <span class="+5500 XP">+5500 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="games-grid">
+                <!-- ZEUS -->
+                <div class="game-card card-zeus">
+                    <div class="game-info">
+                        <div class="card-title-group">
+                            <div class="card-name">Zeus</div>
+                            <div class="card-sep"></div>
+                            <div class="card-subtitle">God of Exploitation</div>
+                        </div>
+                        <div class="sparkle-button">
+                            <button class="play-btn" onclick="launchZeusConsole()">
+                                <span class="spark"></span>
+                                <span class="backdrop"></span>
+                                <svg class="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M14.187 8.096L15 5.25L15.813 8.096C16.0231 8.83114 16.4171 9.50062 16.9577 10.0413C17.4984 10.5819 18.1679 10.9759 18.903 11.186L21.75 12L18.904 12.813C18.1689 13.0231 17.4994 13.4171 16.9587 13.9577C16.4181 14.4984 16.0241 15.1679 15.814 15.903L15 18.75L14.187 15.904C13.9769 15.1689 13.5829 14.4994 13.0423 13.9587C12.5016 13.4181 11.8321 13.0241 11.097 12.814L8.25 12L11.096 11.187C11.8311 10.9769 12.5006 10.5829 13.0413 10.0423C13.5819 9.50162 13.9759 8.83214 14.186 8.097L14.187 8.096Z" />
+                                    <path
+                                        d="M6 14.25L5.741 15.285C5.59267 15.8785 5.28579 16.4206 4.85319 16.8532C4.42059 17.2858 3.87853 17.5927 3.285 17.741L2.25 18L3.285 18.259C3.87853 18.4073 4.42059 18.7142 4.85319 19.1468C5.28579 19.5794 5.59267 20.1215 5.741 20.715L6 21.75L6.259 20.715C6.40725 20.1216 6.71398 19.5796 7.14639 19.147C7.5788 18.7144 8.12065 18.4075 8.714 18.259L9.75 18L8.714 17.741C8.12065 17.5925 7.5788 17.2856 7.14639 16.853C6.71398 16.4204 6.40725 15.8784 6.259 15.285L6 14.25Z" />
+                                    <path
+                                        d="M6.5 4L6.303 4.5915C6.24777 4.75718 6.15472 4.90774 6.03123 5.03123C5.90774 5.15472 5.75718 5.24777 5.5915 5.303L5 5.5L5.5915 5.697C5.75718 5.75223 5.90774 5.84528 6.03123 5.96877C6.15472 6.09226 6.24777 6.24282 6.303 6.4085L6.5 7L6.697 6.4085C6.75223 6.24282 6.84528 6.09226 6.96877 5.96877C7.09226 5.84528 7.24282 5.75223 7.4085 5.697L8 5.5L7.4085 5.303C7.24282 5.24777 7.09226 5.15472 6.96877 5.03123C6.84528 4.90774 6.75223 4.75718 6.697 4.5915L6.5 4Z" />
+                                </svg>
+                                <span class="text">Play</span>
+                            </button>
+                            <span class="particle-pen">
+                                <span class="particle" style="top:20%;left:30%;--delay:0.1s"></span>
+                                <span class="particle" style="top:60%;left:80%;--delay:0.3s"></span>
+                                <span class="particle" style="top:40%;left:10%;--delay:0.5s"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-inner">
+                        <img src="../assets/images/zeus.png" alt="Zeus" class="char-img">
+                        <div class="skill-panel">
+                            <div class="cyber-scanline"></div>
+                            <div class="panel-xp">
+                                <i class="fas fa-crown"></i> +500 XP
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Attack</span><span>90%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 90%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Defense</span><span>30%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 30%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Stealth</span><span>75%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 75%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Detection</span><span>40%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 40%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SELENE -->
+                <div class="game-card card-selene">
+                    <div class="game-info">
+                        <div class="card-title-group">
+                            <div class="card-name">Selene</div>
+                            <div class="card-sep"></div>
+                            <div class="card-subtitle">Goddess of the Moon</div>
+                        </div>
+                        <div class="sparkle-button">
+                            <button class="play-btn" onclick="launchSelene()">
+                                <span class="spark"></span>
+                                <span class="backdrop"></span>
+                                <svg class="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M14.187 8.096L15 5.25L15.813 8.096C16.0231 8.83114 16.4171 9.50062 16.9577 10.0413C17.4984 10.5819 18.1679 10.9759 18.903 11.186L21.75 12L18.904 12.813C18.1689 13.0231 17.4994 13.4171 16.9587 13.9577C16.4181 14.4984 16.0241 15.1679 15.814 15.903L15 18.75L14.187 15.904C13.9769 15.1689 13.5829 14.4994 13.0423 13.9587C12.5016 13.4181 11.8321 13.0241 11.097 12.814L8.25 12L11.096 11.187C11.8311 10.9769 12.5006 10.5829 13.0413 10.0423C13.5819 9.50162 13.9759 8.83214 14.186 8.097L14.187 8.096Z" />
+                                    <path
+                                        d="M6 14.25L5.741 15.285C5.59267 15.8785 5.28579 16.4206 4.85319 16.8532C4.42059 17.2858 3.87853 17.5927 3.285 17.741L2.25 18L3.285 18.259C3.87853 18.4073 4.42059 18.7142 4.85319 19.1468C5.28579 19.5794 5.59267 20.1215 5.741 20.715L6 21.75L6.259 20.715C6.40725 20.1216 6.71398 19.5796 7.14639 19.147C7.5788 18.7144 8.12065 18.4075 8.714 18.259L9.75 18L8.714 17.741C8.12065 17.5925 7.5788 17.2856 7.14639 16.853C6.71398 16.4204 6.40725 15.8784 6.259 15.285L6 14.25Z" />
+                                    <path
+                                        d="M6.5 4L6.303 4.5915C6.24777 4.75718 6.15472 4.90774 6.03123 5.03123C5.90774 5.15472 5.75718 5.24777 5.5915 5.303L5 5.5L5.5915 5.697C5.75718 5.75223 5.90774 5.84528 6.03123 5.96877C6.15472 6.09226 6.24777 6.24282 6.303 6.4085L6.5 7L6.697 6.4085C6.75223 6.24282 6.84528 6.09226 6.96877 5.96877C7.09226 5.84528 7.24282 5.75223 7.4085 5.697L8 5.5L7.4085 5.303C7.24282 5.24777 7.09226 5.15472 6.96877 5.03123C6.84528 4.90774 6.75223 4.75718 6.697 4.5915L6.5 4Z" />
+                                </svg>
+                                <span class="text">Play</span>
+                            </button>
+                            <span class="particle-pen">
+                                <span class="particle" style="top:20%;left:30%;--delay:0.1s"></span>
+                                <span class="particle" style="top:60%;left:80%;--delay:0.3s"></span>
+                                <span class="particle" style="top:40%;left:10%;--delay:0.5s"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-inner">
+                        <img src="../assets/images/selene.png" alt="Selene" class="char-img">
+                        <div class="skill-panel">
+                            <div class="cyber-scanline"></div>
+                            <div class="panel-xp">
+                                <i class="fas fa-moon"></i> +400 XP
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Attack</span><span>45%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 45%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Defense</span><span>70%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 70%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Stealth</span><span>40%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 40%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Detection</span><span>80%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATHENA -->
+                <div class="game-card card-athena">
+                    <div class="game-info">
+                        <div class="card-title-group">
+                            <div class="card-name">Athena</div>
+                            <div class="card-sep"></div>
+                            <div class="card-subtitle">Goddess of Crisis</div>
+                        </div>
+                        <div class="sparkle-button">
+                            <button class="play-btn" onclick="openAthenaGame()">
+                                <span class="spark"></span>
+                                <span class="backdrop"></span>
+                                <svg class="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M14.187 8.096L15 5.25L15.813 8.096C16.0231 8.83114 16.4171 9.50062 16.9577 10.0413C17.4984 10.5819 18.1679 10.9759 18.903 11.186L21.75 12L18.904 12.813C18.1689 13.0231 17.4994 13.4171 16.9587 13.9577C16.4181 14.4984 16.0241 15.1679 15.814 15.903L15 18.75L14.187 15.904C13.9769 15.1689 13.5829 14.4994 13.0423 13.9587C12.5016 13.4181 11.8321 13.0241 11.097 12.814L8.25 12L11.096 11.187C11.8311 10.9769 12.5006 10.5829 13.0413 10.0423C13.5819 9.50162 13.9759 8.83214 14.186 8.097L14.187 8.096Z" />
+                                    <path
+                                        d="M6 14.25L5.741 15.285C5.59267 15.8785 5.28579 16.4206 4.85319 16.8532C4.42059 17.2858 3.87853 17.5927 3.285 17.741L2.25 18L3.285 18.259C3.87853 18.4073 4.42059 18.7142 4.85319 19.1468C5.28579 19.5794 5.59267 20.1215 5.741 20.715L6 21.75L6.259 20.715C6.40725 20.1216 6.71398 19.5796 7.14639 19.147C7.5788 18.7144 8.12065 18.4075 8.714 18.259L9.75 18L8.714 17.741C8.12065 17.5925 7.5788 17.2856 7.14639 16.853C6.71398 16.4204 6.40725 15.8784 6.259 15.285L6 14.25Z" />
+                                    <path
+                                        d="M6.5 4L6.303 4.5915C6.24777 4.75718 6.15472 4.90774 6.03123 5.03123C5.90774 5.15472 5.75718 5.24777 5.5915 5.303L5 5.5L5.5915 5.697C5.75718 5.75223 5.90774 5.84528 6.03123 5.96877C6.15472 6.09226 6.24777 6.24282 6.303 6.4085L6.5 7L6.697 6.4085C6.75223 6.24282 6.84528 6.09226 6.96877 5.96877C7.09226 5.84528 7.24282 5.75223 7.4085 5.697L8 5.5L7.4085 5.303C7.24282 5.24777 7.09226 5.15472 6.96877 5.03123C6.84528 4.90774 6.75223 4.75718 6.697 4.5915L6.5 4Z" />
+                                </svg>
+                                <span class="text">Play</span>
+                            </button>
+                            <span class="particle-pen">
+                                <span class="particle" style="top:20%;left:30%;--delay:0.1s"></span>
+                                <span class="particle" style="top:60%;left:80%;--delay:0.3s"></span>
+                                <span class="particle" style="top:40%;left:10%;--delay:0.5s"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-inner">
+                        <img src="../assets/images/athena.png" alt="Athena" class="char-img">
+                        <div class="skill-panel">
+                            <div class="cyber-scanline"></div>
+                            <div class="panel-xp">
+                                <i class="fas fa-bolt"></i> +300 XP
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Attack</span><span>60%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Defense</span><span>55%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 55%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Stealth</span><span>65%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 65%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Detection</span><span>90%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 90%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATLAS -->
+                <div class="game-card card-atlas">
+                    <div class="game-info">
+                        <div class="card-title-group">
+                            <div class="card-name">Atlas</div>
+                            <div class="card-sep"></div>
+                            <div class="card-subtitle">God of Defense</div>
+                        </div>
+                        <div class="sparkle-button">
+                            <button class="play-btn" onclick="launchAtlas()">
+                                <span class="spark"></span>
+                                <span class="backdrop"></span>
+                                <svg class="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M14.187 8.096L15 5.25L15.813 8.096C16.0231 8.83114 16.4171 9.50062 16.9577 10.0413C17.4984 10.5819 18.1679 10.9759 18.903 11.186L21.75 12L18.904 12.813C18.1689 13.0231 17.4994 13.4171 16.9587 13.9577C16.4181 14.4984 16.0241 15.1679 15.814 15.903L15 18.75L14.187 15.904C13.9769 15.1689 13.5829 14.4994 13.0423 13.9587C12.5016 13.4181 11.8321 13.0241 11.097 12.814L8.25 12L11.096 11.187C11.8311 10.9769 12.5006 10.5829 13.0413 10.0423C13.5819 9.50162 13.9759 8.83214 14.186 8.097L14.187 8.096Z" />
+                                    <path
+                                        d="M6 14.25L5.741 15.285C5.59267 15.8785 5.28579 16.4206 4.85319 16.8532C4.42059 17.2858 3.87853 17.5927 3.285 17.741L2.25 18L3.285 18.259C3.87853 18.4073 4.42059 18.7142 4.85319 19.1468C5.28579 19.5794 5.59267 20.1215 5.741 20.715L6 21.75L6.259 20.715C6.40725 20.1216 6.71398 19.5796 7.14639 19.147C7.5788 18.7144 8.12065 18.4075 8.714 18.259L9.75 18L8.714 17.741C8.12065 17.5925 7.5788 17.2856 7.14639 16.853C6.71398 16.4204 6.40725 15.8784 6.259 15.285L6 14.25Z" />
+                                    <path
+                                        d="M6.5 4L6.303 4.5915C6.24777 4.75718 6.15472 4.90774 6.03123 5.03123C5.90774 5.15472 5.75718 5.24777 5.5915 5.303L5 5.5L5.5915 5.697C5.75718 5.75223 5.90774 5.84528 6.03123 5.96877C6.15472 6.09226 6.24777 6.24282 6.303 6.4085L6.5 7L6.697 6.4085C6.75223 6.24282 6.84528 6.09226 6.96877 5.96877C7.09226 5.84528 7.24282 5.75223 7.4085 5.697L8 5.5L7.4085 5.303C7.24282 5.24777 7.09226 5.15472 6.96877 5.03123C6.84528 4.90774 6.75223 4.75718 6.697 4.5915L6.5 4Z" />
+                                </svg>
+                                <span class="text">Play</span>
+                            </button>
+                            <span class="particle-pen">
+                                <span class="particle" style="top:20%;left:30%;--delay:0.1s"></span>
+                                <span class="particle" style="top:60%;left:80%;--delay:0.3s"></span>
+                                <span class="particle" style="top:40%;left:10%;--delay:0.5s"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-inner">
+                        <img src="../assets/images/atlas.png" alt="Atlas" class="char-img">
+                        <div class="skill-panel">
+                            <div class="cyber-scanline"></div>
+                            <div class="panel-xp">
+                                <i class="fas fa-shield-halved"></i> +250 XP
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Attack</span><span>35%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 35%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Defense</span><span>95%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 95%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Stealth</span><span>30%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 30%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Detection</span><span>70%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 70%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CALLIOPE -->
+                <div class="game-card card-calliope">
+                    <div class="game-info">
+                        <div class="card-title-group">
+                            <div class="card-name">Calliope</div>
+                            <div class="card-sep"></div>
+                            <div class="card-subtitle">Goddess of Strategic War</div>
+                        </div>
+                        <div class="sparkle-button">
+                            <button class="play-btn">
+                                <span class="spark"></span>
+                                <span class="backdrop"></span>
+                                <svg class="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M14.187 8.096L15 5.25L15.813 8.096C16.0231 8.83114 16.4171 9.50062 16.9577 10.0413C17.4984 10.5819 18.1679 10.9759 18.903 11.186L21.75 12L18.904 12.813C18.1689 13.0231 17.4994 13.4171 16.9587 13.9577C16.4181 14.4984 16.0241 15.1679 15.814 15.903L15 18.75L14.187 15.904C13.9769 15.1689 13.5829 14.4994 13.0423 13.9587C12.5016 13.4181 11.8321 13.0241 11.097 12.814L8.25 12L11.096 11.187C11.8311 10.9769 12.5006 10.5829 13.0413 10.0423C13.5819 9.50162 13.9759 8.83214 14.186 8.097L14.187 8.096Z" />
+                                    <path
+                                        d="M6 14.25L5.741 15.285C5.59267 15.8785 5.28579 16.4206 4.85319 16.8532C4.42059 17.2858 3.87853 17.5927 3.285 17.741L2.25 18L3.285 18.259C3.87853 18.4073 4.42059 18.7142 4.85319 19.1468C5.28579 19.5794 5.59267 20.1215 5.741 20.715L6 21.75L6.259 20.715C6.40725 20.1216 6.71398 19.5796 7.14639 19.147C7.5788 18.7144 8.12065 18.4075 8.714 18.259L9.75 18L8.714 17.741C8.12065 17.5925 7.5788 17.2856 7.14639 16.853C6.71398 16.4204 6.40725 15.8784 6.259 15.285L6 14.25Z" />
+                                    <path
+                                        d="M6.5 4L6.303 4.5915C6.24777 4.75718 6.15472 4.90774 6.03123 5.03123C5.90774 5.15472 5.75718 5.24777 5.5915 5.303L5 5.5L5.5915 5.697C5.75718 5.75223 5.90774 5.84528 6.03123 5.96877C6.15472 6.09226 6.24777 6.24282 6.303 6.4085L6.5 7L6.697 6.4085C6.75223 6.24282 6.84528 6.09226 6.96877 5.96877C7.09226 5.84528 7.24282 5.75223 7.4085 5.697L8 5.5L7.4085 5.303C7.24282 5.24777 7.09226 5.15472 6.96877 5.03123C6.84528 4.90774 6.75223 4.75718 6.697 4.5915L6.5 4Z" />
+                                </svg>
+                                <span class="text">Play</span>
+                            </button>
+                            <span class="particle-pen">
+                                <span class="particle" style="top:20%;left:30%;--delay:0.1s"></span>
+                                <span class="particle" style="top:60%;left:80%;--delay:0.3s"></span>
+                                <span class="particle" style="top:40%;left:10%;--delay:0.5s"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-inner">
+                        <img src="../assets/images/calliope.png" alt="Calliope" class="char-img">
+                        <div class="skill-panel">
+                            <div class="cyber-scanline"></div>
+                            <div class="panel-xp">
+                                <i class="fas fa-fire"></i> +250 XP
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Attack</span><span>70%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 70%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Defense</span><span>80%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 80%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Stealth</span><span>50%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 50%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Detection</span><span>65%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 65%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZEPHYRE -->
+                <div class="game-card card-zephyre">
+                    <div class="game-info">
+                        <div class="card-title-group">
+                            <div class="card-name">Zephyre</div>
+                            <div class="card-sep"></div>
+                            <div class="card-subtitle">God of Surveillance</div>
+                        </div>
+                        <div class="sparkle-button">
+                            <button class="play-btn">
+                                <span class="spark"></span>
+                                <span class="backdrop"></span>
+                                <svg class="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M14.187 8.096L15 5.25L15.813 8.096C16.0231 8.83114 16.4171 9.50062 16.9577 10.0413C17.4984 10.5819 18.1679 10.9759 18.903 11.186L21.75 12L18.904 12.813C18.1689 13.0231 17.4994 13.4171 16.9587 13.9577C16.4181 14.4984 16.0241 15.1679 15.814 15.903L15 18.75L14.187 15.904C13.9769 15.1689 13.5829 14.4994 13.0423 13.9587C12.5016 13.4181 11.8321 13.0241 11.097 12.814L8.25 12L11.096 11.187C11.8311 10.9769 12.5006 10.5829 13.0413 10.0423C13.5819 9.50162 13.4181 10.5829 13.0413 10.0423C13.5819 9.50162 13.9759 8.83214 14.186 8.097L14.187 8.096Z" />
+                                    <path
+                                        d="M6 14.25L5.741 15.285C5.59267 15.8785 5.28579 16.4206 4.85319 16.8532C4.42059 17.2858 3.87853 17.5927 3.285 17.741L2.25 18L3.285 18.259C3.87853 18.4073 4.42059 18.7142 4.85319 19.1468C5.28579 19.5794 5.59267 20.1215 5.741 20.715L6 21.75L6.259 20.715C6.40725 20.1216 6.71398 19.5796 7.14639 19.147C7.5788 18.7144 8.12065 18.4075 8.714 18.259L9.75 18L8.714 17.741C8.12065 17.5925 7.5788 17.2856 7.14639 16.853C6.71398 16.4204 6.40725 15.8784 6.259 15.285L6 14.25Z" />
+                                    <path
+                                        d="M6.5 4L6.303 4.5915C6.24777 4.75718 6.15472 4.90774 6.03123 5.03123C5.90774 5.15472 5.75718 5.24777 5.5915 5.303L5 5.5L5.5915 5.697C5.75718 5.75223 5.90774 5.84528 6.03123 5.96877C6.15472 6.09226 6.24777 6.24282 6.303 6.4085L6.5 7L6.697 6.4085C6.75223 6.24282 6.84528 6.09226 6.96877 5.96877C7.09226 5.84528 7.24282 5.75223 7.4085 5.697L8 5.5L7.4085 5.303C7.24282 5.24777 7.09226 5.15472 6.96877 5.03123C6.84528 4.90774 6.75223 4.75718 6.697 4.5915L6.5 4Z" />
+                                </svg>
+                                <span class="text">Play</span>
+                            </button>
+                            <span class="particle-pen">
+                                <span class="particle" style="top:20%;left:30%;--delay:0.1s"></span>
+                                <span class="particle" style="top:60%;left:80%;--delay:0.3s"></span>
+                                <span class="particle" style="top:40%;left:10%;--delay:0.5s"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-inner">
+                        <img src="../assets/images/zephyre.png" alt="Zephyre" class="char-img">
+                        <div class="skill-panel">
+                            <div class="cyber-scanline"></div>
+                            <div class="panel-xp">
+                                <i class="fas fa-crown"></i> +600 XP
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Attack</span><span>30%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 30%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Defense</span><span>50%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 50%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Stealth</span><span>60%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-row">
+                                <div class="skill-label"><span>Detection</span><span>95%</span></div>
+                                <div class="skill-bar-track">
+                                    <div class="skill-bar-fill" style="--fill: 95%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        /* Stars Generator */
+        const bg = document.getElementById('starsBg');
+        for (let i = 0; i < 150; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            const size = Math.random() * 2 + 0.5;
+            s.style.cssText = `
+        width:${size}px; height:${size}px;
+        top:${Math.random() * 100}%;
+        left:${Math.random() * 100}%;
+        --dur:${(Math.random() * 3 + 2)}s;
+        --del:${(Math.random() * 5)}s;
+        opacity:${Math.random() * 0.4};
+      `;
+            bg.appendChild(s);
+        }
+
+        function launchZeusConsole() {
+            const overlay = document.getElementById('zeus-terminal-overlay');
+            const body = document.getElementById('terminal-content');
+            overlay.style.display = 'flex';
+            body.innerHTML = '';
+
+            const messages = [
+                "> SYSTEM READY. Awaiting simulation command...",
+            ];
+
+            let lineIndex = 0;
+
+            function typeLine() {
+                if (lineIndex < messages.length) {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-msg';
+                    if (messages[lineIndex] === "python password/password/main.py") {
+                        line.classList.add('terminal-command');
+                    }
+                    body.appendChild(line);
+
+                    let charIndex = 0;
+                    const text = messages[lineIndex];
+
+                    function typeChar() {
+                        if (charIndex < text.length) {
+                            line.textContent += text[charIndex];
+                            charIndex++;
+                            setTimeout(typeChar, 15);
+                        } else {
+                            lineIndex++;
+                            const delay = 150;
+                            setTimeout(typeLine, delay);
+                        }
+                    }
+                    typeChar();
+                } else {
+                    const cursorLine = document.createElement('div');
+                    cursorLine.className = 'terminal-msg type-cursor';
+                    cursorLine.textContent = "> ";
+                    body.appendChild(cursorLine);
+                }
+            }
+
+            typeLine();
+        }
+
+        function startZeusSimulation() {
+            const body = document.getElementById('terminal-content');
+            const line = document.createElement('div');
+            line.className = 'terminal-msg';
+            line.style.color = '#fff';
+            line.style.fontWeight = 'bold';
+            line.textContent = "> INITIALIZING PASSWORD CRACKER ENGINE...";
+            body.appendChild(line);
+
+            // Instant redirect (250ms delay)
+            setTimeout(() => {
+                window.location.href="password/password/index.html";
+            }, 250);
+        }
+
+        function closeZeusConsole() {
+            document.getElementById('zeus-terminal-overlay').style.display = 'none';
+        }
+
+        function openAthenaGame() {
+            const overlay = document.getElementById('athena-overlay');
+            overlay.style.display = 'flex';
+
+            setTimeout(() => document.getElementById('line-1').classList.add('show'), 200);
+            setTimeout(() => document.getElementById('line-2').classList.add('show'), 800);
+            setTimeout(() => document.getElementById('line-3').classList.add('show'), 1400);
+
+            setTimeout(() => {
+                window.location.href="CyberGame/CyberGame/index.html";
+            }, 2500);
+        }
+
+        function launchSelene() {
+            showCrisisAlert();
+        }
+
+        function showCrisisAlert() {
+            const overlay = document.getElementById("crisis-alert");
+            overlay.style.display = "flex";
+
+            // Generate particles
+            const container = overlay.querySelector('.emergency-particles');
+            container.innerHTML = '';
+            for (let i = 0; i < 40; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = Math.random() * 100 + '%';
+                spark.style.top = Math.random() * 100 + '%';
+                spark.style.setProperty('--rand-x', (Math.random() * 200) + 'px');
+                spark.style.animationDelay = Math.random() * 2 + 's';
+                spark.style.width = (Math.random() * 3 + 1) + 'px';
+                spark.style.height = spark.style.width;
+                container.appendChild(spark);
+            }
+
+            setTimeout(() => {
+                window.location.href="selene/selene/ind.html";
+            }, 1800);
+        }
+
+        function launchAtlas() {
+            const overlay = document.getElementById("atlas-overlay");
+            overlay.style.display = "flex";
+
+            // Generate shield particles
+            const container = overlay.querySelector('.defense-particles');
+            container.innerHTML = '';
+            for (let i = 0; i < 50; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'def-spark';
+                spark.style.left = '50%';
+                spark.style.top = '50%';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 200 + Math.random() * 200;
+                spark.style.setProperty('--x', Math.cos(angle) * dist + 'px');
+                spark.style.setProperty('--y', Math.sin(angle) * dist + 'px');
+                spark.style.animationDelay = Math.random() * 1.5 + 's';
+                container.appendChild(spark);
+            }
+
+            // Animate text sequence
+            const pTags = overlay.querySelectorAll('.defense-text p');
+            pTags.forEach((p, index) => {
+                p.style.animationDelay = (index * 0.4) + 's';
+            });
+
+            setTimeout(() => {
+                window.location.href="mazecyber/mazecyber/maze.html";
+            }, 1800);
+        }
+    </script>
+    <!-- ELECTRIC BORDER SVG FILTER -->
+    <svg style="position: absolute; width: 0; height: 0;">
+        <filter id="turbulent-displace">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.15" numOctaves="2" result="noise" seed="1">
+                <animate attributeName="seed" from="1" to="100" dur="10s" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
+    <script src="../js/cyber-notifications.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../js/mr-nova.js"></script>
+<script src="api.js"></script>
+
+<script>
+
+async function loadLeaderboard(){
+
+    const players = await apiRequest("/api/leaderboard");
+
+    const table = document.getElementById("leaderboard");
+
+    players.forEach(player => {
+
+        table.innerHTML += `
+        <tr>
+            <td>${player.username}</td>
+            <td>${player.xp}</td>
+        </tr>
+        `;
+
+    });
+
+}
+
+window.onload = loadLeaderboard;
+
+</script>
+
+window.onload = loadLeaderboard;
+    <!-- Athena Loading Overlay -->
+    <div id="athena-overlay" class="athena-overlay">
+        <div class="athena-loading-text">
+            <div id="line-1" class="loading-line">> INITIALIZING ATHENA PROTOCOL...</div>
+            <div id="line-2" class="loading-line">> LOADING SIMULATION ENGINE...</div>
+            <div id="line-3" class="loading-line">> ENTERING CYBER ARENA... <span class="cursor"></span></div>
+        </div>
+    </div>
+    <!-- Zeus Terminal Overlay -->
+    <div id="zeus-terminal-overlay" class="zeus-terminal-overlay">
+        <div class="terminal-window">
+            <div class="terminal-inner">
+                <div class="terminal-header">
+                    <div class="terminal-title">ZEUS EXPLOITATION CONSOLE</div>
+                    <div style="display:flex; gap:8px;">
+                        <span style="width:10px; height:10px; border-radius:50%; background:#ff5f56; box-shadow: 0 0 5px #ff5f56;"></span>
+                        <span style="width:10px; height:10px; border-radius:50%; background:#ffbd2e; box-shadow: 0 0 5px #ffbd2e;"></span>
+                        <span style="width:10px; height:10px; border-radius:50%; background:#27c93f; box-shadow: 0 0 5px #27c93f;"></span>
+                    </div>
+                </div>
+                <div class="terminal-body" id="terminal-content">
+                    <!-- Content injected via JS -->
+                </div>
+                <div class="terminal-footer">
+                    <button class="term-btn btn-run" onclick="startZeusSimulation()">Run Simulation</button>
+                    <button class="term-btn btn-close" onclick="closeZeusConsole()">Close Terminal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crisis Alert Overlay -->
+    <div id="crisis-alert" class="crisis-alert">
+        <div class="emergency-particles"></div>
+        <div class="alert-box">
+            <h2>⚠ CRISIS DETECTED</h2>
+            <p class="show">Multiple cyber threats detected</p>
+            <p class="show">Emergency simulation starting...</p>
+            <p class="show">Launching SELENE...</p>
+        </div>
+    </div>
+<table style="margin-top:20px; width:300px;">
+<thead>
+<tr>
+<th>User</th>
+<th>XP</th>
+</tr>
+</thead>
+
+<tbody id="leaderboard"></tbody>
+
+</table>
+    <!-- Atlas Defense Shield Overlay -->
+    <div id="atlas-overlay" class="atlas-overlay">
+        <div class="shield-container">
+            <div class="shield-ring"></div>
+            <div class="shield-ring" style="animation-delay: 0.3s;"></div>
+            <div class="shield-ring" style="animation-delay: 0.6s;"></div>
+            <div class="defense-shield"></div>
+            <div class="defense-particles"></div>
+            <div class="defense-text">
+                <h2>🛡 DEFENSE GRID ACTIVATED</h2>
+                <p>Initializing Atlas Security Protocol...</p>
+                <p>Deploying cyber defense matrix...</p>
+                <p>Launching ATLAS...</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

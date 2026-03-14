@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Path – Nyx Nexus</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ============================================================
+     GLOBAL RESET & BASE 
+  ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #090e24;
+            --bg-mid: #1e1136;
+            --bg-card: rgba(22, 16, 44, 0.85);
+            --purple: #7c3aed;
+            --purple-l: #a855f7;
+            --blue: #3b82f6;
+            --blue-l: #60a5fa;
+            --orange: #f97316;
+            --orange-l: #fb923c;
+            --pink: #ec4899;
+            --cyan: #06b6d4;
+            --green: #22c55e;
+            --red: #ef4444;
+            --text-main: #e2e8f0;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --sidebar-w: 95px;
+            --topbar-h: 80px;
+        }
+
+        body {
+            font-family: 'Exo 2', 'Rajdhani', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: url('../assets/images/background.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: cover;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ============================================================
+     BACKGROUND ANIMATIONS 
+  ============================================================ */
+        .stars-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            animation: twinkle var(--dur, 3s) var(--del, 0s) infinite alternate ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: .1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: .8;
+                transform: scale(1.4);
+            }
+        }
+
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 140px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), transparent);
+            opacity: 0.25;
+            animation: shoot 6s infinite ease-in;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(-10vw) translateY(0) rotate(25deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(120vw) translateY(60vh) rotate(25deg);
+                opacity: 0;
+            }
+        }
+
+        .ambient-orb {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            animation: orbScreen 15s infinite;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        @keyframes orbScreen {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.3;
+                transform: scale(2);
+            }
+        }
+
+        /* ============================================================
+     LAYOUT (Dashboard Structure)
+  ============================================================ */
+        .shell {
+            display: grid;
+            grid-template-columns: var(--sidebar-w) 1fr 300px;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            z-index: 1;
+            gap: 24px;
+            padding-right: 24px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+            z-index: 100;
+            padding: 0;
+        }
+
+        .sidebar-inner {
+            background: rgba(18, 14, 34, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.20);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            width: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 12px;
+            margin: 20px 0;
+            height: calc(100% - 40px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow:
+                -1px -1px 0 rgba(79, 70, 229, 0.4),
+                -2px -2px 0 rgba(124, 58, 237, 0.4),
+                -3px -3px 0 rgba(124, 58, 237, 0.3),
+                -4px -4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar-inner:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .sidebar-left .avatar-self {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--purple-l);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+            overflow: hidden;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .sidebar-left .nav-sep {
+            width: 28px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+            margin: 4px 0;
+        }
+
+        .nav-item {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 52px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.5s;
+            margin-bottom: 8px;
+        }
+
+        .nav-item::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .nav-item::after {
+            content: "";
+            position: absolute;
+            top: 5px;
+            width: 100%;
+            height: 100%;
+            border-radius: 52px;
+            background: linear-gradient(45deg, var(--i), var(--j));
+            transition: 0.5s;
+            filter: blur(15px);
+            z-index: -1;
+            opacity: 0;
+        }
+
+        .nav-item:hover {
+            width: 110px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
+            justify-content: center;
+            transform: translateX(29px);
+            z-index: 1000;
+        }
+
+        .nav-item:hover::before {
+            opacity: 1;
+        }
+
+        .nav-item:hover::after {
+            opacity: 0.5;
+        }
+
+        .nav-item i {
+            color: var(--text-sub);
+            font-size: 1.2rem;
+            transition: 0.5s;
+            transition-delay: 0.2s;
+            z-index: 10;
+            animation: iconFloat 4s infinite ease-in-out;
+        }
+
+        @keyframes iconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .nav-item:hover i {
+            transform: scale(0);
+            color: #fff;
+            transition-delay: 0s;
+            animation: none;
+        }
+
+        .nav-item .nav-label {
+            position: absolute;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transform: scale(0);
+            transition: 0.5s;
+            transition-delay: 0s;
+            z-index: 10;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .nav-item:hover .nav-label {
+            transform: scale(1);
+            transition-delay: 0.2s;
+        }
+
+        .nav-item.active::before {
+            opacity: 0.4;
+        }
+
+        .nav-item.active::after {
+            opacity: 0.2;
+        }
+
+        .nav-item.active i {
+            color: #fff;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+        }
+
+        /* ============================================================
+     MAIN ARENA CONTENT
+  ============================================================ */
+        .main {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.06em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 10;
+            /* 8-layer 3D extrusion in Gold */
+            text-shadow:
+                0 0 25px rgba(172, 149, 21, 0.8),
+                0 0 50px rgba(255, 215, 0, 0.4),
+                -0.8px -0.6px 0 #b8860b,
+                -1.6px -1.2px 0 #8d6605,
+                -2.4px -1.8px 0 #b8860b,
+                -3.2px -2.4px 0 #daa520,
+                -4.0px -3.0px 0 #daa520,
+                -4.8px -3.6px 0 #daa520,
+                -5.6px -4.2px 0 #b8860b,
+                -6.4px -4.8px 0 rgba(0, 0, 0, 0.5);
+            transform: translate(6.4px, 4.8px);
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .module-card {
+            position: relative;
+            border-radius: 14px;
+            background: rgba(22, 16, 44, 0.85);
+            /* Box content color */
+            width: 100%;
+            min-height: 200px;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            /* Outer glowing gradient similar to others */
+        }
+
+        /* The container handling the 3D and glowing borders like neon-border */
+        .module-card-wrapper {
+            position: relative;
+            border-radius: 18px;
+            padding: 4px;
+            background: linear-gradient(135deg, #1e3a8a, #7c3aed, #ff00cc, #06b6d4, #1e3a8a);
+            background-size: 200% 200%;
+            animation: gradientBorder 5s ease infinite;
+            z-index: 1;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow:
+                -1px -1px 0 #3b0764,
+                -2px -2px 0 #451a03,
+                -3px -3px 0 #78350f,
+                -4px -4px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 24px;
+            height: max-content;
+        }
+
+        @keyframes gradientBorder {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .module-card-wrapper:hover {
+            box-shadow:
+                -2px -2px 0 #581c87,
+                -4px -4px 0 #92400e,
+                -6px -6px 25px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(124, 58, 237, 0.4);
+            transform: scale(1.05) translateY(-6px);
+            z-index: 10;
+        }
+
+        .module-card-wrapper::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            background:
+                linear-gradient(105deg,
+                    transparent 10%,
+                    rgba(218, 165, 32, 0.75) 18%,
+                    rgba(255, 235, 120, 1) 25%,
+                    rgba(218, 165, 32, 0.75) 32%,
+                    transparent 50%),
+                linear-gradient(285deg,
+                    transparent 10%,
+                    rgba(218, 165, 32, 0.75) 18%,
+                    rgba(255, 235, 120, 1) 22%,
+                    rgba(218, 165, 32, 0.75) 26%,
+                    transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .module-icon-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .module-icon {
+            font-size: 36px;
+            color: #00eaff;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.15), transparent);
+            border-radius: 50%;
+            padding: 12px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 0 10px rgba(0, 234, 255, 0.8);
+        }
+
+        .module-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .module-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .module-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-badge {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-badge i {
+            color: var(--gold);
+        }
+
+        .btn-start {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, var(--purple), var(--cyan));
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            width: 100%;
+        }
+
+        .btn-start:hover {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.7);
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+
+
+        /* ============================================================
+     RIGHT PANEL (LEADERBOARD)
+  ============================================================ */
+        .right-panel {
+            padding: 24px 0 24px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .glass-panel-wrapper {
+            position: relative;
+            border-radius: 18px;
+            padding: 4px;
+            background: linear-gradient(135deg, #1e3a8a, #5b2d18, #7c3aed, #ff00cc);
+            z-index: 1;
+            box-shadow:
+                -1px -1px 0 #3b0764,
+                -2px -2px 0 #451a03,
+                -3px -3px 0 #78350f,
+                -4px -4px 15px rgba(0, 0, 0, 0.5);
+            height: fit-content;
+        }
+
+        .glass-panel-wrapper::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            background:
+                linear-gradient(105deg,
+                    transparent 10%,
+                    rgba(218, 165, 32, 0.75) 18%,
+                    rgba(255, 235, 120, 1) 25%,
+                    rgba(218, 165, 32, 0.75) 32%,
+                    transparent 50%),
+                linear-gradient(285deg,
+                    transparent 10%,
+                    rgba(218, 165, 32, 0.75) 18%,
+                    rgba(255, 235, 120, 1) 22%,
+                    rgba(218, 165, 32, 0.75) 26%,
+                    transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .glass-panel {
+            background: linear-gradient(145deg, #0f0c29, #1a1235);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+            height: 100%;
+        }
+
+        .panel-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .lb-entry {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            background: rgba(139, 92, 246, 0.06);
+            cursor: pointer;
+            transition: all 0.22s;
+        }
+
+        .lb-entry:hover {
+            transform: translateX(3px);
+            background: rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.35);
+        }
+
+        .lb-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .lb-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .lb-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .lb-xp {
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/cyber-notifications.css">
+</head>
+
+<body>
+
+    <!-- BACKGROUND LAYERS -->
+    <div class="bg-animation">
+        <div class="stars"></div>
+        <div class="shooting-star" style="top: 10%; animation-delay: 0s;"></div>
+        <div class="shooting-star" style="top: 40%; animation-delay: 2s;"></div>
+        <div class="shooting-star" style="top: 70%; animation-delay: 4.5s;"></div>
+    </div>
+    <div class="stars-bg" id="starsBg"></div>
+
+    <div class="bg-animation">
+        <div class="ambient-orb"
+            style="top: 10%; left: 15%; background: radial-gradient(ellipse cover, rgba(139, 92, 246, 0.4) 0%, transparent 70%); box-shadow: 0 0 10px rgba(139, 92, 246, 0.2); animation-duration: 12s; animation-delay: 0s;">
+        </div>
+        <div class="ambient-orb"
+            style="top: 60%; left: 5%; background: radial-gradient(ellipse cover, rgba(249, 115, 22, 0.35) 0%, transparent 70%); box-shadow: 0 0 10px rgba(249, 115, 22, 0.2); animation-duration: 18s; animation-delay: 2s;">
+        </div>
+        <div class="ambient-orb"
+            style="top: 75%; left: 80%; background: radial-gradient(ellipse cover, rgba(59, 130, 246, 0.4) 0%, transparent 70%); box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); animation-duration: 15s; animation-delay: 4s;">
+        </div>
+        <div class="ambient-orb"
+            style="top: 5%; left: 85%; width: 250px; height: 250px; background: radial-gradient(ellipse cover, rgba(236, 72, 153, 0.4) 0%, transparent 70%); box-shadow: 0 0 10px rgba(236, 72, 153, 0.2); animation-duration: 10s; animation-delay: 1s;">
+        </div>
+        <div class="ambient-orb"
+            style="top: 40%; left: 30%; background: radial-gradient(ellipse cover, rgba(6, 182, 212, 0.35) 0%, transparent 70%); box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); animation-duration: 14s; animation-delay: 3s;">
+        </div>
+    </div>
+
+    <div class="shell">
+
+        <!-- ===================== LEFT SIDEBAR ===================== -->
+        <nav class="sidebar-left">
+            <div class="sidebar-inner">
+                <div class="avatar-self">NN</div>
+                <div class="nav-sep"></div>
+
+                <div class="nav-item" style="--i: #7c3aed; --j: #3b82f6;"
+                    onclick="window.location.href='cyberspace.html'">
+                    <i class="fas fa-house"></i>
+                    <span class="nav-label">Dashboard</span>
+                </div>
+                <div class="nav-item" style="--i: #06b6d4; --j: #22c55e;" onclick="window.location.href='games.html'">
+                    <i class="fas fa-gamepad"></i>
+                    <span class="nav-label">Games</span>
+                </div>
+                <!-- Learning Paths ACTIVE here -->
+                <div class="nav-item active" style="--i: #ff00cc; --j: #3333ff;">
+                    <i class="fas fa-route"></i>
+                    <span class="nav-label">Learning Paths</span>
+                </div>
+                <div class="nav-item" style="--i: #f97316; --j: #ef4444;"
+                    onclick="window.location.href='ctf-challenges.html'">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="nav-label">CTF</span>
+                </div>
+                <div class="nav-item" style="--i: #eab308; --j: #f97316;"
+                    onclick="window.location.href='cyber-roadmap.html'">
+                    <i class="fas fa-map-signs"></i>
+                    <span class="nav-label">Roadmaps</span>
+                </div>
+                <div class="nav-item" style="--i: #8b5cf6; --j: #ec4899;" onclick="openThreatMap()">
+                  <i class="fas fa-lightbulb"></i>
+                  <span class="nav-label">MAP</span>
+                </div>
+                <div class="nav-item" style="--i: #06b6d4; --j: #3b82f6;"
+                    onclick="window.location.href='achievements.html'">
+                    <i class="fas fa-trophy"></i>
+                    <span class="nav-label">Achievements</span>
+                </div>
+
+                <div class="sidebar-spacer"></div>
+                <div class="nav-sep"></div>
+                <div class="nav-item" style="--i: #64748b; --j: #94a3b8;" onclick="window.location.href='about.html'">
+          <i class="fas fa-circle-info"></i>
+          <span class="nav-label">About Us</span>
+        </div>
+            </div>
+        </nav>
+
+
+        <!-- ===================== MAIN CONTENT ===================== -->
+        <main class="main">
+            <h1 class="page-title">Skill Tree</h1>
+
+            <div class="module-grid" id="labs">
+
+                <!-- Module 1 -->
+                <div class="module-card-wrapper">
+                    <div class="module-card">
+                        <div>
+                            <div class="module-icon-wrap">
+                                <i class="fas fa-network-wired module-icon"></i>
+                            </div>
+                            <div class="module-title">Networking Fundamentals</div>
+                            <div class="module-desc">Learn how the internet works and how devices communicate.</div>
+                        </div>
+                        <div>
+                            <div class="module-stats">
+                                <div class="stat-badge"><i class="fas fa-door-open" style="color:#60a5fa"></i> 2 Rooms
+                                </div>
+                                <div class="stat-badge"><i class="fas fa-bolt" style="color:#ffd700"></i> +500 XP</div>
+                            </div>
+                            <a href="networking-rooms.html" class="btn-start">Start Learning</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2 -->
+                <div class="module-card-wrapper">
+                    <div class="module-card">
+                        <div>
+                            <div class="module-icon-wrap">
+                                <i class="fas fa-code module-icon"></i>
+                            </div>
+                            <div class="module-title">Programming & Automation</div>
+                            <div class="module-desc">Learn coding logic and automation through challenges.</div>
+                        </div>
+                        <div>
+                            <div class="module-stats">
+                                <div class="stat-badge"><i class="fas fa-door-open" style="color:#60a5fa"></i> 2 Rooms
+                                </div>
+                                <div class="stat-badge"><i class="fas fa-bolt" style="color:#ffd700"></i> +500 XP</div>
+                            </div>
+                            <a href="programming-automation-rooms.html" class="btn-start">Start Learning</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 3 -->
+                <div class="module-card-wrapper">
+                    <div class="module-card">
+                        <div>
+                            <div class="module-icon-wrap">
+                                <i class="fas fa-terminal module-icon"></i>
+                            </div>
+                            <div class="module-title">Operating Systems</div>
+                            <div class="module-desc">Explore Linux systems and command line tools.</div>
+                        </div>
+                        <div>
+                            <div class="module-stats">
+                                <div class="stat-badge"><i class="fas fa-door-open" style="color:#60a5fa"></i> 2 Rooms
+                                </div>
+                                <div class="stat-badge"><i class="fas fa-bolt" style="color:#ffd700"></i> +500 XP</div>
+                            </div>
+                            <a href="#" class="btn-start">Start Learning</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 4 -->
+                <div class="module-card-wrapper">
+                    <div class="module-card">
+                        <div>
+                            <div class="module-icon-wrap">
+                                <i class="fas fa-shield-halved module-icon"></i>
+                            </div>
+                            <div class="module-title">Cybersecurity Fundamentals</div>
+                            <div class="module-desc">Understand security attacks and defensive techniques.</div>
+                        </div>
+                        <div>
+                            <div class="module-stats">
+                                <div class="stat-badge"><i class="fas fa-door-open" style="color:#60a5fa"></i> 2 Rooms
+                                </div>
+                                <div class="stat-badge"><i class="fas fa-bolt" style="color:#ffd700"></i> +500 XP</div>
+                            </div>
+                            <a href="#" class="btn-start">Start Learning</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 5 -->
+                <div class="module-card-wrapper">
+                    <div class="module-card">
+                        <div>
+                            <div class="module-icon-wrap">
+                                <i class="fas fa-magnifying-glass module-icon"></i>
+                            </div>
+                            <div class="module-title">Digital Forensics</div>
+                            <div class="module-desc">Investigate cyber incidents and analyze digital evidence.</div>
+                        </div>
+                        <div>
+                            <div class="module-stats">
+                                <div class="stat-badge"><i class="fas fa-door-open" style="color:#60a5fa"></i> 2 Rooms
+                                </div>
+                                <div class="stat-badge"><i class="fas fa-bolt" style="color:#ffd700"></i> +500 XP</div>
+                            </div>
+                            <a href="#" class="btn-start">Start Learning</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 6 -->
+                <div class="module-card-wrapper">
+                    <div class="module-card">
+                        <div>
+                            <div class="module-icon-wrap">
+                                <i class="fas fa-brain module-icon"></i>
+                            </div>
+                            <div class="module-title">AI Simulation</div>
+                            <div class="module-desc">Explore artificial intelligence through interactive simulations.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="module-stats">
+                                <div class="stat-badge"><i class="fas fa-door-open" style="color:#60a5fa"></i> 2 Rooms
+                                </div>
+                                <div class="stat-badge"><i class="fas fa-bolt" style="color:#ffd700"></i> +500 XP</div>
+                            </div>
+                            <a href="#" class="btn-start">Start Learning</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- ===================== RIGHT PANEL ===================== -->
+        <aside class="right-panel">
+            <div class="glass-panel-wrapper">
+                <div class="glass-panel">
+                    <div class="panel-title">⚡ Leaderboard</div>
+                    <div class="leaderboard-list">
+                        <div class="lb-entry">
+                            <div class="lb-avatar" style="background: linear-gradient(135deg, #f97316, #ec4899)">CK
+                            </div>
+                            <div class="lb-info">
+                                <div class="lb-name">CyberKnight</div>
+                                <div class="lb-xp">5200 XP</div>
+                            </div>
+                            <i class="fas fa-trophy" style="color: #ffd700;"></i>
+                        </div>
+                        <div class="lb-entry">
+                            <div class="lb-avatar" style="background: linear-gradient(135deg, #06b6d4, #3b82f6)">PH
+                            </div>
+                            <div class="lb-info">
+                                <div class="lb-name">PacketHunter</div>
+                                <div class="lb-xp">4800 XP</div>
+                            </div>
+                            <i class="fas fa-medal" style="color: #c0c0c0;"></i>
+                        </div>
+                        <div class="lb-entry">
+                            <div class="lb-avatar" style="background: linear-gradient(135deg, #22c55e, #10b981)">CS
+                            </div>
+                            <div class="lb-info">
+                                <div class="lb-name">CodeSamurai</div>
+                                <div class="lb-xp">4300 XP</div>
+                            </div>
+                            <i class="fas fa-medal" style="color: #cd7f32;"></i>
+                        </div>
+                        <div class="lb-entry">
+                            <div class="lb-avatar" style="background: linear-gradient(135deg, #7c3aed, #a855f7)">AW
+                            </div>
+                            <div class="lb-info">
+                                <div class="lb-name">AIWizard</div>
+                                <div class="lb-xp">3900 XP</div>
+                            </div>
+                        </div>
+                        <div class="lb-entry">
+                            <div class="lb-avatar" style="background: linear-gradient(135deg, #ef4444, #f97316)">NE
+                            </div>
+                            <div class="lb-info">
+                                <div class="lb-name">NetExplorer</div>
+                                <div class="lb-xp">3600 XP</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+<script src="api.js"></script>
+    <script src="../js/cyber-notifications.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../js/mr-nova.js"></script>
+   <script>
+
+async function loadLabs(){
+
+    const userId = localStorage.getItem("user_id");
+
+    const labs = await apiRequest(`/api/labs?user_id=${userId}`);
+
+    const container = document.getElementById("labs");
+
+    container.innerHTML = "";
+
+    labs.forEach(lab => {
+
+        const completed = lab.completed ? "Completed ✓" : "Complete";
+
+        container.innerHTML += `
+        <div class="lab-card">
+
+            <h3>${lab.name}</h3>
+
+            <button 
+                onclick="completeLab(${lab.id})"
+                ${lab.completed ? "disabled" : ""}
+            >
+                ${completed}
+            </button>
+
+        </div>
+        `;
+
+    });
+
+}
+
+
+async function completeLab(labId){
+
+    const userId = localStorage.getItem("user_id");
+
+    await apiRequest("/api/labs/complete","POST",{
+        user_id: userId,
+        lab_id: labId
+    });
+
+    alert("Lab completed!");
+
+    loadLabs(); // refresh UI
+}
+
+
+window.onload = loadLabs;
+
+</script>
+
+</body>
+
+</html>

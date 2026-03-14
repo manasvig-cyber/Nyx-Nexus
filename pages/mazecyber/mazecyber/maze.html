@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Breach - Cybersecurity Training</title>
+    <link rel="stylesheet" href="../../../css/maze.css">
+    <style>
+        body {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../../../assets/images/mazecyber/atlas.png') !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mission Briefing Header -->
+    <header id="mission-header">
+        <div class="briefing-content">
+            <h2 class="glow-text">MISSION: NETWORK BREACH</h2>
+            <p>An attacker has infiltrated the network infrastructure. Navigate the grid, investigate nodes, and secure
+                the compromised <strong>Root Server</strong> before the breach spreads.</p>
+        </div>
+    </header>
+
+    <div id="game-overlay">
+        <div class="overlay-panel">
+            <h1 class="glow-text">NETWORK SIMULATION</h1>
+            <p>Initializing Security Agent v4.0...</p>
+            <div id="stats-hud-main">
+                <div class="stat-item">BREACH TIMER: <span id="timer-val">00:00</span></div>
+            </div>
+            <button id="start-btn" class="cyber-btn">DEPLOY AGENT</button>
+        </div>
+    </div>
+
+    <!-- Challenge Popup Modal -->
+    <div id="challenge-modal" class="hidden">
+        <div class="modal-content">
+            <h3 id="challenge-title">ALERT: Threat Detected</h3>
+            <div id="challenge-body">
+                <!-- Content injected via JS -->
+            </div>
+            <div id="challenge-options">
+                <!-- Options injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="end-overlay" class="hidden">
+        <div class="overlay-panel">
+            <h1 id="end-status" class="glow-text">SYSTEM SECURED</h1>
+            <p id="end-details"></p>
+            <button id="restart-btn" class="cyber-btn">RE-INITIALIZE NETWORK</button>
+        </div>
+    </div>
+
+    <!-- In-Game HUD -->
+    <div id="ingame-hud">
+        <div class="hud-item">AGENT STATUS: <span id="agent-status" class="status-green">ONLINE</span></div>
+        <div class="hud-item">BREACH TIME: <span id="hud-timer">00:00</span></div>
+        <div class="hud-item">TOOLS: <span id="tools-val">NONE</span></div>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="mazeCanvas"></canvas>
+        <div id="scan-pulse" class="hidden"></div>
+    </div>
+
+    <div id="controls-hint">
+        [ARROWS] Move Security Agent | [S] Pulse Scan Network | [SPACE] Trigger Node
+    </div>
+
+    <script src="../../../js/mazecyber/mazecyber/maze.js"></script>
+</body>
+
+</html>

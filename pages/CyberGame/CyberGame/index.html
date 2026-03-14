@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Detective - Cyber Training Platform</title>
+    <meta name="description" content="Investigate cyber attacks and uncover hidden threats.">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../../../css/CyberGame_styles.css">
+</head>
+
+<body>
+
+    <div id="app-container">
+        <!-- Hero Section -->
+        <header class="hero"
+            style="background-image: url('../../../assets/images/CyberGame/CyberGame/assets/images/hero-banner.jpg');">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="match-badge"><span class="match-rate">98% Match</span> <span class="difficulty hard"
+                        id="difficulty-badge" title="Click to change difficulty" style="cursor:pointer;"
+                        onclick="cycleDifficulty()">Hard</span></div>
+
+                <h1 class="game-title">Threat <span>Detective</span></h1>
+                <p class="subtitle">Investigate cyber attacks and uncover hidden threats</p>
+
+                <div class="meta-tags">
+                    <span class="tag">Cybersecurity Investigation</span>
+                    <span class="tag">Threat Analysis</span>
+                    <span class="tag">Log Investigation</span>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="play-btn" class="btn btn-primary">
+                        <i data-lucide="play" class="icon-small fill-icon"></i>
+                        Play Investigation
+                    </button>
+                    <button class="btn btn-secondary tooltip-container" data-tooltip="Add to List">
+                        <i data-lucide="plus" class="icon-small"></i>
+                    </button>
+                    <button class="btn btn-secondary tooltip-container" data-tooltip="Like">
+                        <i data-lucide="thumbs-up" class="icon-small"></i>
+                    </button>
+                    <!-- Language selector: inline, no new navbar -->
+                    <select id="lang-select" onchange="applyLangFromSelect(this.value)" title="Select Language"
+                        style="background:rgba(20,20,30,.85);color:#e0e0e0;border:1px solid rgba(0,240,255,.35);border-radius:4px;padding:.45rem .7rem;font-family:'Inter',sans-serif;font-size:.85rem;cursor:pointer;outline:none;">
+                        <option value="english">🌐 English</option>
+                        <option value="hindi">🇮🇳 Hindi</option>
+                        <option value="telugu">🇮🇳 Telugu</option>
+                        <option value="spanish">🇪🇸 Spanish</option>
+                        <option value="french">🇫🇷 French</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="hero-fade-bottom"></div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="missions-section">
+                <div class="section-header">
+                    <h2 class="section-title">Missions</h2>
+                    <!-- Season selector: clicking opens inline popup -->
+                    <div class="season-selector" id="existing-season-selector" onclick="toggleSeasonPopup(event)"
+                        title="Change Season" style="position:relative;">
+                        <span id="existing-season-label">Season 1</span>
+                        <i data-lucide="chevron-down" class="icon-tiny" id="season-chevron"></i>
+                        <!-- Inline season popup (no separate nav needed) -->
+                        <ul id="season-popup"
+                            style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:220px;background:rgba(14,14,22,.97);border:1px solid rgba(0,240,255,.3);border-radius:6px;list-style:none;padding:.35rem 0;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,.7);">
+                            <li onclick="selectSeason(1)" id="s-opt-1"
+                                style="padding:.55rem 1rem;font-size:.85rem;color:#00f0ff;cursor:pointer;border-left:2px solid #00f0ff;background:rgba(0,240,255,.05);">
+                                Season 1 – Inside the Breach</li>
+                            <li onclick="selectSeason(2)" id="s-opt-2"
+                                style="padding:.55rem 1rem;font-size:.85rem;color:#c0c0d0;cursor:pointer;border-left:2px solid transparent;">
+                                Season 2 – Shadow Protocol</li>
+                            <li onclick="selectSeason(3)" id="s-opt-3"
+                                style="padding:.55rem 1rem;font-size:.85rem;color:#c0c0d0;cursor:pointer;border-left:2px solid transparent;">
+                                Season 3 – Cyber Siege</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="missions-list">
+                    <!-- Mission 1 -->
+                    <article class="mission-card">
+                        <div class="mission-number">1</div>
+                        <div class="mission-thumb">
+                            <img src="../../../assets/images/CyberGame/CyberGame/assets/images/midnight-invoice.png"
+                                alt="The Midnight Invoice">
+                            <div class="play-overlay">
+                                <i data-lucide="play" class="play-icon"></i>
+                            </div>
+                        </div>
+                        <div class="mission-info">
+                            <div class="mission-header">
+                                <h3 class="mission-title">The Midnight Invoice</h3>
+                                <span class="mission-duration">10m</span>
+                            </div>
+                            <p class="mission-desc">An anomalous login and suspicious invoice email have been detected
+                                at FinTrust Pvt Ltd. Investigate email headers, login activity, and network logs to
+                                uncover how attackers used a phishing email to compromise employee credentials and
+                                access sensitive financial records.</p>
+                        </div>
+                    </article>
+
+                    <!-- Mission 2 -->
+                    <article class="mission-card">
+                        <div class="mission-number">2</div>
+                        <div class="mission-thumb">
+                            <img src="../../../assets/images/CyberGame/CyberGame/assets/images/insider.png"
+                                alt="The Silent Insider">
+                            <div class="play-overlay">
+                                <i data-lucide="play" class="play-icon"></i>
+                            </div>
+                        </div>
+                        <div class="mission-info">
+                            <div class="mission-header">
+                                <h3 class="mission-title">The Silent Insider</h3>
+                                <span class="mission-duration">10m</span>
+                            </div>
+                            <p class="mission-desc">HealthSync Labs has detected suspicious outbound traffic. Analyze
+                                system activity logs, file access patterns, and network traffic to identify the internal
+                                user responsible for slowly leaking sensitive patient data.</p>
+                        </div>
+                    </article>
+
+                    <!-- Mission 3 -->
+                    <article class="mission-card">
+                        <div class="mission-number">3</div>
+                        <div class="mission-thumb">
+                            <img src="../../../assets/images/CyberGame/CyberGame/assets/images/insider.png"
+                                alt="Insider Data Leak">
+                            <div class="play-overlay">
+                                <i data-lucide="play" class="play-icon"></i>
+                            </div>
+                        </div>
+                        <div class="mission-info">
+                            <div class="mission-header">
+                                <h3 class="mission-title">Insider Data Leak</h3>
+                                <span class="mission-duration">10m</span>
+                            </div>
+                            <p class="mission-desc">A sudden spike in outbound data traffic suggests that sensitive
+                                information may be leaving the organization. Investigate employee activity logs, file
+                                access patterns, and cloud uploads to identify the compromised internal account
+                                responsible for the leak.</p>
+                        </div>
+                    </article>
+
+                    <!-- Mission 4 -->
+                    <article class="mission-card">
+                        <div class="mission-number">4</div>
+                        <div class="mission-thumb">
+                            <img src="../../../assets/images/CyberGame/CyberGame/assets/images/ransomware.png"
+                                alt="Ransomware Incident">
+                            <div class="play-overlay">
+                                <i data-lucide="play" class="play-icon"></i>
+                            </div>
+                        </div>
+                        <div class="mission-info">
+                            <div class="mission-header">
+                                <h3 class="mission-title">Ransomware Incident</h3>
+                                <span class="mission-duration">10m</span>
+                            </div>
+                            <p class="mission-desc">Multiple systems across the network have been encrypted by
+                                ransomware. Analyze system alerts, suspicious executables, and lateral movement logs to
+                                identify the initial infection vector and isolate affected machines before the attack
+                                spreads further.</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../../../js/CyberGame/CyberGame/script.js"></script>
+
+    <script>
+        // ── Episode Completion Logic ────────────────────────────────────
+        function checkCompletedMissions() {
+            document.querySelectorAll('.mission-card').forEach(function(card) {
+                var epId = card.dataset.ep;
+                if (!epId) {
+                    var title = card.querySelector('.mission-title').textContent;
+                    if (title === "The Midnight Invoice" || title === "Suspicious Email Attack") epId = '1';
+                    else if (title === "The Silent Insider" || title === "Insider Data Leak" || title === "Ransomware Incident") epId = '2';
+                }
+
+                if (epId && localStorage.getItem('episode_' + epId + '_completed') === 'true') {
+                    // Update image position upward slightly
+                    var thumb = card.querySelector('.mission-thumb');
+                    if (thumb) thumb.style.transform = 'translateY(-12px)';
+
+                    // Replace play overlay with COMPLETED text
+                    var overlay = card.querySelector('.play-overlay');
+                    if (overlay) {
+                        overlay.innerHTML = '<div style="color: var(--success); font-family: var(--font-heading); font-weight: bold; font-size: 1.1rem; text-shadow: 0 0 5px rgba(0,255,127,0.5);">COMPLETED</div>';
+                        overlay.style.opacity = '1';
+                        overlay.style.background = 'rgba(0, 0, 0, 0.7)';
+                    }
+
+                    // Add top-right completed badge
+                    if (!card.querySelector('.completed-badge')) {
+                        var badge = document.createElement('div');
+                        badge.className = 'completed-badge';
+                        badge.style.cssText = 'position: absolute; top: 12px; right: 12px; background: var(--success); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; z-index: 10;';
+                        badge.innerHTML = '✔ Completed';
+                        card.appendChild(badge);
+                    }
+                }
+            });
+        }
+        window.addEventListener('DOMContentLoaded', checkCompletedMissions);
+
+        /* ═══════════════════════════════════════════════════════════════
+           GAME STATE
+        ═══════════════════════════════════════════════════════════════ */
+        var selectedDifficulty = 'Hard';
+        var selectedSeason = '1';
+        var selectedLanguage = 'English';
+
+        /* ── Season mission data ──────────────────────────────────────── */
+        var SEASON_MISSIONS = {
+            1: [
+                { num: 1, title: 'The Midnight Invoice', desc: 'An anomalous login and suspicious invoice email have been detected at FinTrust Pvt Ltd. Investigate email headers, login activity, and network logs to uncover how attackers used a phishing email to compromise employee credentials and access sensitive financial records.', ep: '1', img: 'assets/images/midnight-invoice.png' },
+                { num: 2, title: 'The Silent Insider', desc: 'HealthSync Labs has detected suspicious outbound traffic. Analyze system activity logs, file access patterns, and network traffic to identify the internal user responsible for slowly leaking sensitive patient data.', ep: '2', img: 'assets/images/insider.png' },
+                { num: 3, title: 'Insider Data Leak', desc: 'A sudden spike in outbound data traffic suggests that sensitive information may be leaving the organization. Investigate employee activity logs, file access patterns, and cloud uploads to identify the compromised internal account responsible for the leak.', ep: '2', img: 'assets/images/insider.png' },
+                { num: 4, title: 'Ransomware Incident', desc: 'Multiple systems across the network have been encrypted by ransomware. Analyze system alerts, suspicious executables, and lateral movement logs to identify the initial infection vector and isolate affected machines before the attack spreads further.', ep: '2', img: 'assets/images/ransomware.png' }
+            ],
+            2: [
+                { num: 1, title: 'Suspicious Email Attack', desc: 'A company executive receives a targeted phishing email disguised as an urgent business request. Analyze the email headers, embedded links, and malicious attachments to determine the attack method and prevent further credential compromise.', ep: '1', img: 'assets/images/midnight-invoice.png' },
+                { num: 2, title: 'Insider Data Leak', desc: 'A sudden spike in outbound data traffic suggests that sensitive information may be leaving the organization. Investigate employee activity logs, file access patterns, and cloud uploads to identify the compromised internal account responsible for the leak.', ep: '2', img: 'assets/images/insider.png' }
+            ],
+            3: []
+        };
+
+        /* ── Translation dictionary ───────────────────────────────────── */
+        var translations = {
+            english: {
+                start: 'Play Investigation',
+                missions: 'Missions',
+                season2name: 'Missions \u2013 Season 2: Shadow Protocol',
+                season3name: 'Missions \u2013 Season 3: Cyber Siege',
+                comingSoon: '\u23f3 Season {n} episodes are coming soon. Stay tuned, Detective.',
+                missionTitles: {
+                    'The Midnight Invoice': 'The Midnight Invoice',
+                    'The Silent Insider': 'The Silent Insider',
+                    'Insider Data Leak': 'Insider Data Leak',
+                    'Ransomware Incident': 'Ransomware Incident',
+                    'Suspicious Email Attack': 'Suspicious Email Attack'
+                }
+            },
+            hindi: {
+                start: '\u091c\u093e\u0902\u091a \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902',
+                missions: '\u092e\u093f\u0936\u0928',
+                season2name: '\u092e\u093f\u0936\u0928 \u2013 \u0938\u0940\u091c\u093c\u0928 2: \u0936\u0948\u0921\u094b \u092a\u094d\u0930\u094b\u091f\u094b\u0915\u0949\u0932',
+                season3name: '\u092e\u093f\u0936\u0928 \u2013 \u0938\u0940\u091c\u093c\u0928 3: \u0938\u093e\u0907\u092c\u0930 \u0918\u0947\u0930\u093e\u092c\u0902\u0926\u0940',
+                comingSoon: '\u23f3 \u0938\u0940\u091c\u093c\u0928 {n} \u091c\u0932\u094d\u0926 \u0906\u090f\u0917\u093e\u0964',
+                missionTitles: {
+                    'The Midnight Invoice': '\u0905\u0930\u094d\u0927\u0930\u093e\u0924 \u0915\u093e \u0907\u0928\u094d\u0935\u0949\u092f\u0938',
+                    'The Silent Insider': '\u091a\u0941\u092a \u0905\u0902\u0926\u0930\u0942\u0928\u0940 \u0916\u0924\u0930\u093e',
+                    'Insider Data Leak': '\u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0932\u0940\u0915',
+                    'Ransomware Incident': '\u0930\u0948\u0928\u0938\u092e\u0935\u0947\u092f\u0930 \u0918\u091f\u0928\u093e',
+                    'Suspicious Email Attack': '\u0938\u0902\u0926\u093f\u0917\u094d\u0927 \u0908\u092e\u0947\u0932 \u0939\u092e\u0932\u093e'
+                }
+            },
+            telugu: {
+                start: '\u0c2a\u0c30\u0c3f\u0c36\u0c4b\u0c27\u0c28 \u0c2a\u0c4d\u0c30\u0c3e\u0c30\u0c02\u0c2d\u0c3f\u0c02\u0c1a\u0c02\u0c21\u0c3f',
+                missions: '\u0c2e\u0c3f\u0c37\u0c28\u0c4d\u0c32\u0c41',
+                season2name: '\u0c2e\u0c3f\u0c37\u0c28\u0c4d\u0c32\u0c41 \u2013 \u0c38\u0c40\u0c1c\u0c28\u0c4d 2',
+                season3name: '\u0c2e\u0c3f\u0c37\u0c28\u0c4d\u0c32\u0c41 \u2013 \u0c38\u0c40\u0c1c\u0c28\u0c4d 3',
+                comingSoon: '\u23f3 \u0c38\u0c40\u0c1c\u0c28\u0c4d {n} \u0c0e\u0c3e\u0c02\u0c1f\u0c4d\u0c32\u0c41 \u0c35\u0c38\u0c4d\u0c24\u0c41\u0c28\u0c4d\u0c28\u0c3e\u0c2f\u0c3f.',
+                missionTitles: {
+                    'The Midnight Invoice': '\u0c05\u0c30\u0c4d\u0c27\u0c30\u0c3e\u0c24\u0c4d\u0c30\u0c3f \u0c07\u0c28\u0c4d\u0c35\u0c3e\u0c2f\u0c3f\u0c38\u0c4d',
+                    'The Silent Insider': '\u0c28\u0c3f\u0c36\u0c4d\u0c36\u0c2c\u0c4d\u0c26 \u0c12\u0c15\u0c4d\u0c15\u0c21\u0c41',
+                    'Insider Data Leak': '\u0c21\u0c47\u0c1f\u0c3e \u0c32\u0c40\u0c15\u0c4d',
+                    'Ransomware Incident': '\u0c30\u0c3e\u0c28\u0c4d\u0c38\u0c2e\u0c4d\u0c35\u0c47\u0c30\u0c4d',
+                    'Suspicious Email Attack': '\u0c05\u0c28\u0c41\u0c2e\u0c3e\u0c28\u0c3e\u0c38\u0c4d\u0c2a\u0c26 \u0c07\u0c2e\u0c46\u0c2f\u0c3f\u0c32\u0c4d'
+                }
+            },
+            spanish: {
+                start: 'Iniciar Investigaci\u00f3n',
+                missions: 'Misiones',
+                season2name: 'Misiones \u2013 Temporada 2: Protocolo Sombra',
+                season3name: 'Misiones \u2013 Temporada 3: Asedio Cibern\u00e9tico',
+                comingSoon: '\u23f3 Los episodios de la Temporada {n} pr\u00f3ximamente.',
+                missionTitles: {
+                    'The Midnight Invoice': 'La Factura de Medianoche',
+                    'The Silent Insider': 'El Infiltrado Silencioso',
+                    'Insider Data Leak': 'Fuga de Datos Internos',
+                    'Ransomware Incident': 'Incidente de Ransomware',
+                    'Suspicious Email Attack': 'Ataque de Correo Sospechoso'
+                }
+            },
+            french: {
+                start: 'Lancer l\u2019Enqu\u00eate',
+                missions: 'Missions',
+                season2name: 'Missions \u2013 Saison 2: Protocole Fantôme',
+                season3name: 'Missions \u2013 Saison 3: Cyber Si\u00e8ge',
+                comingSoon: '\u23f3 Les \u00e9pisodes de la Saison {n} arrivent bient\u00f4t.',
+                missionTitles: {
+                    'The Midnight Invoice': 'La Facture de Minuit',
+                    'The Silent Insider': 'L\u2019Initié Silencieux',
+                    'Insider Data Leak': 'Fuite de Donn\u00e9es Interne',
+                    'Ransomware Incident': 'Incident Ransomware',
+                    'Suspicious Email Attack': 'Attaque par Email Suspect'
+                }
+            }
+        };
+
+        /* ─── Helper: get translation object ──────────────────── */
+        function tr() { return translations[selectedLanguage.toLowerCase()] || translations.english; }
+
+        /* ══ 1. DIFFICULTY BADGE: click to cycle Easy → Medium → Hard ══ */
+        var diffCycle = ['Easy', 'Medium', 'Hard'];
+        function cycleDifficulty() {
+            var idx = diffCycle.indexOf(selectedDifficulty);
+            selectedDifficulty = diffCycle[(idx + 1) % diffCycle.length];
+            var badge = document.getElementById('difficulty-badge');
+            if (badge) {
+                badge.textContent = selectedDifficulty.toUpperCase();
+                badge.className = 'difficulty ' + selectedDifficulty.toLowerCase();
+            }
+        }
+
+        /* ══ 2. SEASON POPUP: toggle inline popup on existing selector ══ */
+        function toggleSeasonPopup(e) {
+            e.stopPropagation();
+            var popup = document.getElementById('season-popup');
+            var chevron = document.getElementById('season-chevron');
+            var isOpen = popup.style.display !== 'none';
+            popup.style.display = isOpen ? 'none' : 'block';
+            if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+        }
+
+        function selectSeason(num) {
+            selectedSeason = String(num);
+            // Update label
+            var lbl = document.getElementById('existing-season-label');
+            if (lbl) lbl.textContent = 'Season ' + num;
+            // Update option highlights
+            [1, 2, 3].forEach(function (n) {
+                var opt = document.getElementById('s-opt-' + n);
+                if (!opt) return;
+                if (n === num) {
+                    opt.style.color = '#00f0ff';
+                    opt.style.borderLeft = '2px solid #00f0ff';
+                    opt.style.background = 'rgba(0,240,255,.05)';
+                } else {
+                    opt.style.color = '#c0c0d0';
+                    opt.style.borderLeft = '2px solid transparent';
+                    opt.style.background = '';
+                }
+            });
+            // Close popup
+            var popup = document.getElementById('season-popup');
+            var chevron = document.getElementById('season-chevron');
+            if (popup) popup.style.display = 'none';
+            if (chevron) chevron.style.transform = '';
+            tdUpdateSeason(num);
+        }
+
+        /* ══ 3. LANGUAGE: native select → update all text ══════════════ */
+        function applyLangFromSelect(lang) {
+            selectedLanguage = lang.charAt(0).toUpperCase() + lang.slice(1);
+            var t = tr();
+            // Play button
+            var pb = document.getElementById('play-btn');
+            if (pb) pb.innerHTML = '<i data-lucide="play" class="icon-small fill-icon"></i> ' + t.start;
+            // Re-render missions with translated titles
+            tdUpdateSeason(parseInt(selectedSeason));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        /* ══ Season mission renderer ════════════════════════════════════ */
+        function tdUpdateSeason(num) {
+            var t = tr();
+            var st = document.querySelector('.section-title');
+            var titleMap = { 1: t.missions, 2: t.season2name, 3: t.season3name };
+            if (st) st.textContent = titleMap[num] || t.missions;
+
+            var ml = document.querySelector('.missions-list');
+            if (!ml) return;
+
+            var oldNotice = document.getElementById('season-coming-soon');
+            if (oldNotice) oldNotice.remove();
+
+            if (num === 3 || !SEASON_MISSIONS[num] || SEASON_MISSIONS[num].length === 0) {
+                ml.querySelectorAll('.mission-card').forEach(function (c) { c.style.display = 'none'; });
+                var p = document.createElement('p');
+                p.id = 'season-coming-soon';
+                p.style.cssText = 'color:#a0a0b0;font-family:"Fira Code",monospace;padding:2rem 0;font-size:.9rem;';
+                p.textContent = t.comingSoon.replace('{n}', num);
+                ml.after(p);
+                return;
+            }
+
+            var missions = SEASON_MISSIONS[num];
+            ml.innerHTML = '';
+            missions.forEach(function (m) {
+                var displayTitle = (t.missionTitles && t.missionTitles[m.title]) ? t.missionTitles[m.title] : m.title;
+                ml.innerHTML += [
+                    '<article class="mission-card" data-ep="' + m.ep + '">',
+                    '  <div class="mission-number">' + m.num + '</div>',
+                    '  <div class="mission-thumb">',
+                    '    <img src="' + (m.img || 'assets/images/midnight-invoice.png') + '" alt="' + displayTitle + '">',
+                    '    <div class="play-overlay"><i data-lucide="play" class="play-icon"></i></div>',
+                    '  </div>',
+                    '  <div class="mission-info">',
+                    '    <div class="mission-header">',
+                    '      <h3 class="mission-title">' + displayTitle + '</h3>',
+                    '      <span class="mission-duration">10m</span>',
+                    '    </div>',
+                    '    <p class="mission-desc">' + m.desc + '</p>',
+                    '  </div>',
+                    '</article>'
+                ].join('');
+            });
+            ml.querySelectorAll('.mission-card').forEach(function (card) {
+                card.addEventListener('click', function () {
+                    var ep = this.dataset.ep || '1';
+                    var title = this.querySelector('.mission-title').textContent;
+                    var loader = document.createElement('div');
+                    loader.style.cssText = 'position:fixed;inset:0;background:rgba(10,10,15,.92);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--primary);font-family:var(--font-heading);';
+                    loader.innerHTML = '<div style="font-size:1.8rem;letter-spacing:2px;margin-bottom:2rem;">INITIALIZING SECURE CONNECTION...</div>'
+                        + '<div style="font-size:1rem;color:#fff;">Mission: <span style="color:var(--secondary)">' + title + '</span></div>'
+                        + '<div style="width:300px;height:4px;background:#333;margin-top:2rem;border-radius:2px;overflow:hidden;">'
+                        + '<div style="height:100%;background:var(--primary);animation:loadBar 1.5s ease-in-out forwards;"></div></div>'
+                        + '<style>@keyframes loadBar{0%{width:0}50%{width:70%}100%{width:100%}}</style>';
+                    document.body.appendChild(loader);
+                    setTimeout(function () {
+                        loader.style.opacity = '0'; loader.style.transition = 'opacity .3s';
+                        setTimeout(function () { loader.remove(); window.location.href='investigation.html?ep=' + ep; }, 300);
+                    }, 1800);
+                });
+            });
+            if (window.lucide) lucide.createIcons();
+            checkCompletedMissions();
+        }
+
+        /* ══ Close season popup on outside click ════════════════════════ */
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#existing-season-selector')) {
+                var popup = document.getElementById('season-popup');
+                var chevron = document.getElementById('season-chevron');
+                if (popup) popup.style.display = 'none';
+                if (chevron) chevron.style.transform = '';
+            }
+        });
+
+        /* ══ Difficulty badge colors ════════════════════════════════════ */
+        (function () {
+            var s = document.createElement('style');
+            s.textContent = [
+                '.difficulty.easy{border:1px solid #00ff7f;color:#00ff7f;padding:.1rem .4rem;border-radius:3px;font-size:.85rem;text-transform:uppercase;box-shadow:0 0 5px rgba(0,255,127,.3);}',
+                '.difficulty.medium{border:1px solid #f39c12;color:#f39c12;padding:.1rem .4rem;border-radius:3px;font-size:.85rem;text-transform:uppercase;box-shadow:0 0 5px rgba(243,156,18,.3);}',
+                '.difficulty.hard{border:1px solid var(--secondary);color:var(--secondary);padding:.1rem .4rem;border-radius:3px;font-size:.85rem;text-transform:uppercase;box-shadow:0 0 5px rgba(255,0,60,.3);}'
+            ].join('');
+            document.head.appendChild(s);
+        })();
+    </script>
+</body>
+
+</html>
