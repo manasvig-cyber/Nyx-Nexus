@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Cyber Threat Monitor</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css?v=3">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="dashboard">
+        
+        <!-- Header Section -->
+        <header id="main-header">
+            <div class="header-left">
+                <h1>GLOBAL THREAT MONITOR</h1>
+                <div class="live-status">
+                    <span class="dot"></span> LIVE INTEL: CONNECTED
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="feed-badges">
+                    <span class="badge">ThreatFox</span>
+                    <span class="badge">SANS ISC</span>
+                    <span class="badge">IPinfo</span>
+                </div>
+                <div class="clock" id="utc-clock">00:00:00 UTC</div>
+            </div>
+        </header>
+
+        <!-- Main Map Area -->
+        <div id="map-container">
+            <div id="map"></div>
+            
+            <!-- Grid Background Overlay -->
+            <div class="grid-overlay"></div>
+
+            <!-- Floating UI Panels -->
+            <div class="floating-panel top-left-panel">
+                <div class="panel-label">LIVE IOCs</div>
+                <div class="panel-value" id="val-iocs">0</div>
+            </div>
+            
+            <div class="floating-panel middle-left-panel">
+                <div class="panel-label">SYSTEM STATUS</div>
+                <div class="panel-value status-green">OPERATIONAL</div>
+            </div>
+
+            <div class="floating-panel top-right-panel">
+                <div class="panel-label">MONITORED FEEDS</div>
+                <div class="panel-value" id="val-feeds">4 ACTIVE SOURCES</div>
+            </div>
+
+            <div class="floating-panel middle-right-panel">
+                <div class="panel-label">GLOBAL SEVERITY</div>
+                <div class="panel-value status-orange" id="val-severity">ELEVATED</div>
+            </div>
+
+            <!-- Threat Intelligence Side Panel -->
+            <div id="threat-panel" class="hidden">
+                <div class="panel-header">
+                    <h2><span class="icon">⚡</span> THREAT INTELLIGENCE <span id="close-panel" style="float:right; cursor:pointer;" title="Close">&times;</span></h2>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="label">Country:</span>
+                        <span class="val" id="tp-country">N/A</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Threat Level:</span>
+                        <span class="val" id="tp-severity">N/A</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Recent Attack Types:</span>
+                        <span class="val" id="tp-type">N/A</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Malicious IPs Detected:</span>
+                        <span class="val" id="tp-ips">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Last Activity:</span>
+                        <span class="val" id="tp-time">N/A</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Activity Log -->
+        <footer id="main-footer">
+            <div class="footer-label">RECENT ACTIVITY:</div>
+            <div id="live-marquee">
+                <div class="marquee-content" id="marquee-text">
+                    <!-- Dynamic Log Content -->
+                    Awaiting incoming activity logs...
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js?v=3"></script>
+</body>
+</html>

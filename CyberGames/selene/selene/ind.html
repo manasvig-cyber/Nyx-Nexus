@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOC Simulator - Incident Triage Challenge</title>
+  <style>
+    :root {
+      --bg: #0a0500;
+      --bg-glass: #190a05cc;
+      --bg-darker: #0a0502ee;
+      --grid: #3c140544;
+      --text-normal: #ffe6c8;
+      --text-dim: #b48c78;
+      --text-highlight: #ffc878;
+      --text-success: #64ff32;
+      --text-warning: #ff9614;
+      --text-danger: #ff3c00;
+      --text-info: #ffb432;
+      --block-red: #b4280a;
+      --ignore-brown: #3c2814;
+      --border-molten: #ff781e;
+      --glow-fire: #ff5a14;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text-normal);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background-image: url('selene.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      image-rendering: crisp-edges;
+    }
+
+    #container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      padding: 1.5vw;
+      overflow: hidden;
+    }
+
+    .panel {
+      background: var(--bg-glass);
+      border: 2px solid var(--border-molten);
+      border-radius: 6px;
+      box-shadow: 0 0 24px rgba(255,90,20,0.35), inset 0 0 14px rgba(0,0,0,0.75);
+      backdrop-filter: blur(3px);
+      position: absolute;
+      overflow: hidden;
+    }
+
+    .panel.glow-pulse::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: linear-gradient(45deg, transparent, var(--glow-fire), transparent) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: pulse-glow 3s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes pulse-glow {
+      0%,100% { opacity: 0.3; transform: scale(1.02); }
+      50%     { opacity: 0.7; transform: scale(1.06); }
+    }
+
+    #header {
+      top: 1.2vw;
+      left: 1.2vw;
+      right: 1.2vw;
+      height: 5vw;
+      min-height: 60px;
+      text-align: center;
+      line-height: 5vw;
+      font-size: clamp(1.3rem, 2.8vw, 2.2rem);
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      color: var(--text-highlight);
+      text-shadow: 0 0 14px var(--glow-fire);
+    }
+
+    #live-log { left: 1.2vw; top: 7.5vw; width: 22vw; min-width: 260px; height: 18vw; max-height: 240px; }
+    #packet-capture { right: 1.2vw; top: 7.5vw; width: 20vw; min-width: 240px; height: 12vw; max-height: 160px; }
+    #progress { right: 1.2vw; top: 20.5vw; width: 20vw; min-width: 240px; height: 7vw; max-height: 90px; }
+
+    #main-incident {
+      left: 24vw;
+      right: 22vw;
+      top: 7.5vw;
+      height: 24vw;
+      min-height: 280px;
+      max-height: 420px;
+      padding: 1.2vw;
+    }
+
+    #incident-title {
+      color: var(--text-warning);
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+      margin-bottom: 0.8vw;
+      text-shadow: 0 0 10px rgba(255,150,20,0.8);
+      animation: blink 1.8s infinite alternate;
+    }
+
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.65; } }
+
+    #story { font-size: clamp(0.95rem, 1.6vw, 1.15rem); line-height: 1.48; margin-bottom: 1.2vw; }
+
+    #evidence h4 { color: var(--text-highlight); margin: 1vw 0 0.5vw; font-size: 1rem; }
+
+    .evidence-item { font-size: 0.9rem; color: var(--text-dim); margin: 0.35vw 0; }
+
+    #correlation-log {
+      margin-top: 1.2vw;
+      background: var(--bg-darker);
+      padding: 0.8vw;
+      border-radius: 5px;
+      font-size: 0.88rem;
+      color: #bbb;
+      line-height: 1.5;
+    }
+
+    #actions {
+      position: absolute;
+      bottom: 11vw;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 3vw;
+      align-items: center;
+    }
+
+    .action-btn {
+      width: 14vw;
+      min-width: 160px;
+      height: 6vw;
+      min-height: 64px;
+      max-height: 80px;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: bold;
+      color: white;
+      border: 3px solid var(--text-highlight);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-shadow: 0 1px 4px black;
+    }
+
+    #block-btn  { background: var(--block-red); }
+    #ignore-btn { background: var(--ignore-brown); }
+
+    .action-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 30px currentColor;
+    }
+
+    #feedback {
+      position: absolute;
+      bottom: 18vw;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.75);
+      padding: 1vw 3vw;
+      border-radius: 8px;
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      font-weight: bold;
+      border: 2px solid;
+      display: none;
+      pointer-events: none;
+    }
+
+    #controls {
+      position: absolute;
+      bottom: 2vw;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.65);
+      padding: 0.6vw 2vw;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: #ddd;
+      white-space: nowrap;
+    }
+
+    #game-over {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      text-align: center;
+      text-shadow: 0 0 25px black;
+    }
+
+    #game-over h1 { font-size: 6vw; margin-bottom: 2vw; min-width: 500px; }
+
+    .success { color: var(--text-success); text-shadow: 0 0 30px #64ff32aa; }
+    .fail    { color: var(--text-danger);   text-shadow: 0 0 30px #ff3c00aa; }
+
+    canvas#particles { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div id="container">
+
+  <div id="header" class="panel glow-pulse">⚡ SOC INCIDENT ANALYSIS - INVESTIGATE EACH ALERT ⚡</div>
+
+  <div id="live-log" class="panel">
+    <h3>📋 LIVE LOG FEED</h3>
+    <div id="log-lines"></div>
+  </div>
+
+  <div id="packet-capture" class="panel">
+    <h3>📦 PACKET CAPTURE</h3>
+    <div class="packet-preview" id="packet-preview"></div>
+    <div class="hex" id="hex-dump">---------------- ----------------</div>
+  </div>
+
+  <div id="progress" class="panel">
+    <div class="progress-item"><span>INCIDENT</span><span id="incident-count">1/5</span></div>
+    <div class="progress-item"><span>CORRECT</span><span id="correct-count">0/3</span></div>
+  </div>
+
+  <div id="main-incident" class="panel glow-pulse">
+    <div id="incident-title">INCIDENT #1 - INVESTIGATION REQUIRED</div>
+    <div id="story"></div>
+    <div id="evidence">
+      <h4>🔍 EVIDENCE LOG:</h4>
+      <div id="evidence-list"></div>
+    </div>
+    <div id="correlation-log"></div>
+  </div>
+
+  <div id="actions">
+    <button id="block-btn"  class="action-btn">BLOCK ←</button>
+    <span style="font-size:1.6rem; color:var(--text-highlight);">or</span>
+    <button id="ignore-btn" class="action-btn">→ IGNORE</button>
+  </div>
+
+  <div id="feedback"></div>
+
+  <div id="controls">
+    ← LEFT = BLOCK incident        RIGHT → = IGNORE activity        ESC = Abort mission
+  </div>
+
+  <div id="game-over">
+    <h1 id="result-title"></h1>
+    <p id="result-score"></p>
+    <p style="font-size:1.6rem; margin-top:5vh; color:#aaa;">Returning to main simulation in 3 seconds...</p>
+  </div>
+
+</div>
+
+<script>
+// ────────────────────────────────────────────────
+//   DATA & LOGIC
+// ────────────────────────────────────────────────
+
+const alertStories = [
+  { story: "Unusual DNS queries with long subdomains. Possible data exfiltration over DNS protocol.", correct: "BLOCK",
+    evidence: ["Source: 8.52.219.169", "Domain: ijlapp...evil.com", "Queries: 313 in 5 min", "Type: TXT (large)", "Base64-like encoding"] },
+  { story: "HR portal showing unusual database errors. ' OR 1=1-- detected in search fields.", correct: "BLOCK",
+    evidence: ["Source: 185.220.101.47", "Endpoint: /hr/search.php", "Payload: ' OR 1=1-- ", "UA: scanner-like", "500 SQL error"] },
+  { story: "Repeated failed logins from unusual geo-location. Account lockout triggered.", correct: "BLOCK",
+    evidence: ["Source: 91.XXX.XX.12 (Moscow)", "Target: vpn.corp.com", "Attempts: 87 in 4 min", "Usernames tried: admin, root,..."] },
+  { story: "Outbound 2.1 GB transfer to unknown cloud at 2:17 AM from accounting.", correct: "BLOCK",
+    evidence: ["User: m.chen (Finance)", "Dest: 104.18.XX.145", "Data: 2.1 GB", "File: customers_enc.zip"] },
+  { story: "Nightly backup job running – IT confirmed maintenance window.", correct: "IGNORE",
+    evidence: ["Source: backup-client-4", "Target: backup-srv-01", "RSYNC over SSH", "180 GB", "Approved 01:00-03:00"] },
+  { story: "Automatic Windows updates from official Microsoft servers.", correct: "IGNORE",
+    evidence: ["Source: ws-472", "Target: update.microsoft.com", "KB5001337", "Signed by MS"] },
+  { story: "Employee remote access from home – matches approved schedule.", correct: "IGNORE",
+    evidence: ["User: k.brown (Sales)", "MFA success", "Corporate laptop", "Time: 21:45 (allowed)"] },
+];
+
+function shuffle(a) { return a.sort(()=>Math.random()-0.5); }
+let alerts = shuffle([...alertStories]).slice(0,5);
+let current = 0;
+let correctCount = 0;
+let gameOver = false;
+
+let shake = 0;
+// flash variable removed
+
+// ─── Canvas Embers ─────────────────────────────────
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', ()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+class Ember {
+  constructor(x,y, burst=false) {
+    this.x = x;
+    this.y = y;
+    this.size = Math.random()*3 + 1.5;
+    this.vx = (Math.random()-0.5) * (burst?6:1.5);
+    this.vy = burst ? Math.random()*-5-3 : Math.random()*-1.8-0.8;
+    this.life = 1;
+    this.decay = Math.random()*0.015 + 0.008;
+    this.hue = Math.random()*40 + 15; // orange-yellow
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy -= 0.08; // float up
+    this.vx *= 0.985;
+    this.life -= this.decay;
+    return this.life > 0;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.life * 0.9;
+    ctx.fillStyle = `hsl(${this.hue}, 100%, ${60 + this.life*40}%)`;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = `hsl(${this.hue}, 100%, 60%)`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * this.life * 1.4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+let embers = [];
+
+function spawnEmbers(x,y,count=12, burst=false) {
+  for(let i=0; i<count; i++) {
+    embers.push(new Ember(x,y, burst));
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // random background embers
+  if(Math.random() < 0.08) {
+    spawnEmbers(Math.random()*canvas.width, canvas.height-20, 1, false);
+  }
+
+  embers = embers.filter(e => {
+    if(e.update()) {
+      e.draw();
+      return true;
+    }
+    return false;
+  });
+
+  // screen shake logic
+  const container = document.getElementById('container');
+  if(shake > 0) {
+    const intensity = shake * 0.8; 
+    const dx = (Math.random()-0.5) * intensity;
+    const dy = (Math.random()-0.5) * intensity;
+    container.style.transform = `translate(${dx}px, ${dy}px)`;
+    shake--;
+  } else {
+    container.style.transform = 'none';
+  }
+
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ─── Game Logic ────────────────────────────────────
+
+const logLinesEl = document.getElementById("log-lines");
+const packetEl = document.getElementById("packet-preview");
+const hexEl = document.getElementById("hex-dump");
+const titleEl = document.getElementById("incident-title");
+const storyEl = document.getElementById("story");
+const evidenceEl = document.getElementById("evidence-list");
+const corrEl = document.getElementById("correlation-log");
+const feedbackEl = document.getElementById("feedback");
+const incCountEl = document.getElementById("incident-count");
+const corrCountEl = document.getElementById("correct-count");
+const gameOverEl = document.getElementById("game-over");
+const resultTitle = document.getElementById("result-title");
+const resultScore = document.getElementById("result-score");
+
+function randomTS() {
+  const h = String(Math.floor(Math.random()*24)).padStart(2, '0');
+  const m = String(Math.floor(Math.random()*60)).padStart(2, '0');
+  return `${h}:${m}:${Math.floor(Math.random()*60).toString().padStart(2,'0')}`;
+}
+
+function updateLog() {
+  logLinesEl.innerHTML = "";
+  for(let i=0; i<5; i++) {
+    const div = document.createElement("div");
+    div.className = "log-line";
+    div.textContent = `[${randomTS()}] SIEM: ${Math.floor(Math.random()*800)+120} eps`;
+    logLinesEl.appendChild(div);
+  }
+}
+
+function randomHex() {
+  let s = "";
+  for(let i=0; i<32; i++) s += "0123456789ABCDEF"[Math.floor(Math.random()*16)];
+  return s.match(/.{1,8}/g).join(" ");
+}
+
+function showAlert(idx) {
+  const a = alerts[idx];
+  titleEl.textContent = `INCIDENT #${idx+1} - INVESTIGATION REQUIRED`;
+  storyEl.textContent = a.story;
+
+  evidenceEl.innerHTML = a.evidence.map(txt => `<div class="evidence-item">• ${txt}</div>`).join("");
+
+  corrEl.innerHTML = `
+    [${randomTS()}] Correlation engine: Pattern matched<br>
+    [${randomTS()}] Alert generated - priority ${Math.floor(Math.random()*5)+1}
+  `;
+
+  packetEl.textContent = `${Math.random()>0.5?"UDP":"TCP"} | Flags: ${["SYN","ACK","PSH","URG"][Math.floor(Math.random()*4)]} | Len: ${Math.floor(Math.random()*1200)+80}`;
+  hexEl.textContent = randomHex();
+
+  incCountEl.textContent = `${idx+1}/5`;
+  corrCountEl.textContent = `${correctCount}/3`;
+}
+
+function showFeedback(msg, isCorrect) {
+  feedbackEl.textContent = msg;
+  feedbackEl.style.borderColor = isCorrect ? "var(--text-success)" : "var(--text-danger)";
+  feedbackEl.style.color = isCorrect ? "var(--text-success)" : "var(--text-danger)";
+  feedbackEl.style.display = "block";
+
+  if (!isCorrect) {
+    shake = 20; // ~333ms at 60fps
+    spawnEmbers(canvas.width/2, canvas.height/2, 40, true);
+    // if you have alarm sound:
+    // new Audio("alarm-short.mp3").play().catch(()=>0);
+  } else {
+    spawnEmbers(canvas.width/2, canvas.height*0.7, 12, false);
+  }
+
+  setTimeout(() => {
+    feedbackEl.style.display = "none";
+    current++;
+    if (current >= 5) {
+      gameOver = true;
+      endGame();
+    } else {
+      showAlert(current);
+    }
+  }, 1600);
+}
+
+function endGame() {
+  gameOverEl.style.display = "flex";
+  const success = correctCount >= 3;
+  resultTitle.textContent = success ? "🎯 ANALYSIS COMPLETE!" : "⚠️ ANALYSIS FAILED!";
+  resultTitle.className = success ? "success" : "fail";
+  resultScore.textContent = `Correct decisions: ${correctCount}/5`;
+
+  setTimeout(() => {
+    alert("Simulation ended. Reload page to play again.");
+  }, 3800);
+}
+
+// ─── Init ──────────────────────────────────────────
+updateLog();
+setInterval(updateLog, 7000);
+
+showAlert(0);
+
+// ─── Controls ──────────────────────────────────────
+window.addEventListener("keydown", e => {
+  if (gameOver) return;
+  if (e.key === "Escape") return alert("Simulation aborted.");
+
+  if (e.key === "ArrowLeft") {
+    const ok = alerts[current].correct === "BLOCK";
+    correctCount += ok ? 1 : 0;
+    showFeedback(ok ? "✓ CORRECT! Blocked threat" : "✗ WRONG! Should have blocked", ok);
+  }
+  else if (e.key === "ArrowRight") {
+    const ok = alerts[current].correct === "IGNORE";
+    correctCount += ok ? 1 : 0;
+    showFeedback(ok ? "✓ CORRECT! Safe activity" : "✗ WRONG! Missed real threat", ok);
+  }
+});
+
+document.getElementById("block-btn").onclick  = () => window.dispatchEvent(new KeyboardEvent("keydown",{key:"ArrowLeft"}));
+document.getElementById("ignore-btn").onclick = () => window.dispatchEvent(new KeyboardEvent("keydown",{key:"ArrowRight"}));
+
+</script>
+</body>
+</html>
